@@ -101,15 +101,15 @@ class AF():
                     dfa_states.add(next_states)
                     queue.append(next_states)
 
-                dfa_transitions.append([list(current_state), symbol, list(next_states)])
+                dfa_transitions.append([sorted(list(current_state)), symbol, list(next_states)])
 
         for state in dfa_states:
             if any(accept_state in state for accept_state in self.F):
-                dfa_accepting_states.append(list(state))
+                dfa_accepting_states.append(sorted(list(state)))
         
-        dfa_states = [[list(estado)] for estado in dfa_states]
+        dfa_states = sorted([sorted(list(estado)) for estado in dfa_states])
         for estado in dfa_states:
-            if estado == [[]]:
+            if estado == []:
                 dfa_states.remove(estado)
         dfa_transitions = [[list(estado), simbolo, list(fechamento)] for estado, simbolo, fechamento in dfa_transitions]
         
@@ -117,18 +117,34 @@ class AF():
         while existe_vazio:
             existe_vazio = False
             for transicao in dfa_transitions:
-                if transicao[0] == [] or transicao[2] == []:
+                if transicao[0] == [] or (transicao[2] == [] and transicao[2] not in self.F):
                     dfa_transitions.remove(transicao)
                     existe_vazio= True
+                    
         
         
-        dfa_initial_state = list(dfa_initial_state)
+        dfa_initial_state = sorted(list(dfa_initial_state))
         
         #print(dfa_transitions[4][2])
         
         dfa = AF(dfa_states, self.Alfabeto, dfa_transitions, dfa_initial_state, dfa_accepting_states)
         return dfa
         
+    def convert_to_regular_grammar(self):
+        nao_terminais = [f'N{i}' for i in range(len(self.Estados))]
+        print(nao_terminais)
+        simbolo_inicial = nao_terminais[self.Estados.index(self.Qo)]
+        print(simbolo_inicial)
+        
+        transicoes = {}
+        for transicao in self.Transicoes:
+            inicio = nao_terminais[self.Estados.index(transicao[0])]
+            terminal = transicao[1]
+            if transicao[2] != []:
+                fim = nao_terminais[self.Estados.index(sorted(transicao[2]))]
+                print(f"{inicio} -> {terminal}{fim}")
+            else:
+                print(f"{inicio} -> {terminal}")
                         
 automata = AF(['q0', 'q1', 'q2', 'q3'],
               ['a', 'b'],
@@ -152,7 +168,8 @@ automato2 = AF(['1','2','3'],
                ['2'])
 
 state = '3'
-closure = automata.fechamento_ep('q1')
-print(automato2.convert_to_dfa())
-print(automata.Estados)
-print(closure)  # Output: {'q1', 'q2'}
+closure = automato2.fechamento_ep('q1')
+automata_DFA = automato2.convert_to_dfa()
+print(automata_DFA)
+print(automata_DFA.convert_to_regular_grammar())
+#print(closure)  # Output: {'q1', 'q2'}
