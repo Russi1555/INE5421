@@ -78,7 +78,7 @@ class AF():
         return novas_transicoes
                     
     
-    def convert_to_dfa(self): #TODO: ajeitar variaveis e comentar
+    def convert_to_AFD(self): #TODO: ajeitar variaveis e comentar
         dfa_states = set()
         dfa_transitions = []
         dfa_initial_state = frozenset(self.fechamento_ep(self.Qo))
@@ -97,7 +97,7 @@ class AF():
                     transitions = [transicao[2] for transicao in self.Transicoes
                                    if transicao[0] == state and transicao[1] == symbol]
                     for transition in transitions:
-                        next_states.update(self.fechamento_ep(transition))
+                        next_states.update(sorted(self.fechamento_ep(transition)))
 
                 next_states = frozenset(next_states)
                 
@@ -105,8 +105,8 @@ class AF():
                     dfa_states.add(next_states)
                     queue.append(next_states)
 
-                dfa_transitions.append([sorted(list(current_state)), symbol, list(next_states)])
-
+                dfa_transitions.append([sorted(list(current_state)), symbol, sorted(list(next_states))])
+            
         for state in dfa_states:
             if any(accept_state in state for accept_state in self.F):
                 dfa_accepting_states.append(sorted(list(state)))
@@ -129,32 +129,40 @@ class AF():
         
         dfa_initial_state = sorted(list(dfa_initial_state))
         dfa_transitions = sorted(dfa_transitions)
+        dfa_accepting_states = sorted(dfa_accepting_states)
         
         #print(dfa_transitions[4][2])
         
         dfa = AF(dfa_states, self.Alfabeto, dfa_transitions, dfa_initial_state, dfa_accepting_states)
         return dfa
         
-    def convert_to_regular_grammar(self):  #TODO: ajeitar variaveis e comentar
+    def convert_to_GR(self):  #TODO: ajeitar variaveis e comentar
         nao_terminais = [f'N{i}' for i in range(len(self.Estados))]
-        print(nao_terminais)
+        #print(nao_terminais)
         simbolo_inicial = nao_terminais[self.Estados.index(self.Qo)]
-        print(simbolo_inicial)
+        #print(simbolo_inicial)
             
+        
+        estados_finais = []
+        for estado_aceitacao in self.F:
+            #regras.append([nao_terminais[self.Estados.index(estado_aceitacao)], '$'])
+            estados_finais.append(estado_aceitacao)
+        
         regras = []
-        for transicao in self.Transicoes:
+        for transicao in sorted(self.Transicoes):
             inicio = nao_terminais[self.Estados.index(transicao[0])]
             terminal = transicao[1]
             if transicao[2] != []:
                 fim = nao_terminais[self.Estados.index(sorted(transicao[2]))]
-                print(f"{inicio} -> {terminal}{fim}")
+
+            if transicao[2] in estados_finais:
+                regras.append([inicio, terminal])              
+            if fim:
+               # print(f"{inicio} -> {terminal}")
                 regras.append([inicio, terminal, fim])
-            else:
-                print(f"{inicio} -> {terminal}")
-                regras.append([inicio, simbolo])
-        for estado_aceitacao in self.F:
-            regras.append([nao_terminais[self.Estados.index(estado_aceitacao)], '$'])
-        print(regras)
+        
+        
+       # print(regras)
         GR_resultante = GR(nao_terminais, self.Alfabeto, regras, simbolo_inicial)
         return GR_resultante
                         

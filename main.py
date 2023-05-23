@@ -24,7 +24,10 @@ automato2 = AF(['1','2','3'],
 
 state = '3'
 closure = automato2.fechamento_ep('q1')
-automata_DFA = automato2.convert_to_dfa()
+automata_DFA = automata.convert_to_AFD()
+Gramatica = automata_DFA.convert_to_GR()
+AFND_final = Gramatica.convert_to_AFND()
 print(automata_DFA)
-print(automata_DFA.convert_to_regular_grammar())
+print(Gramatica)
+print(AFND_final)
 #print(closure)  # Output: {'q1', 'q2'}
