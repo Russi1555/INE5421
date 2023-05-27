@@ -5,18 +5,59 @@ class AF():
     def __init__(self,Estados,Alfabeto,Transicao,Qo,F):
         self.Estados = Estados
         self.Alfabeto = Alfabeto
-        self.Transicoes = Transicao #[estado,simbolo,estado]
+        self.Transicoes = Transicao #{estado:{simbolo:estado}}
         self.Qo = Qo
         self.F = F
-        
+        # Verifica se tem transição por epsilon
+        self.epsilon = False
+        for dic in Transicao.values():
+            if '&' in list(dic.keys()):
+                self.epsilon = True
+                break
+            
     def __repr__(self):
         string = f"Estados: {self.Estados}\n"
         string += f"Estado inicial : {self.Qo}\n"
         string+= f"Estados aceitacao : {self.F}\n"
         string+= f"Alfabeto: {self.Alfabeto}\n"
-        string+= f"Transicoes: {self.Transicoes}\n"
+        string+= f"Transicoes: {self.Tabela()}\n"
         return string
     
+    def Tabela(self): # Retorna a tabela de transicoes
+        string = "\033[92;1m\n      δ     \033[0m|"
+        for i in self.Alfabeto: # Coloca a parte do alfabeto
+            string += f"    {i}     |"
+
+        SIMBOLOS = self.Alfabeto
+        if self.epsilon:
+            string += f"\033[91m     ε    \033[0m|"
+            SIMBOLOS += ['&']
+
+        TRACO = (len(string)-(20 if self.epsilon else 13))*"-"
+        string = string[:-1] + "\n"+TRACO+"\n"
+        
+        for estado in self.Estados: # Transições dos estados
+            if len(estado.split(',')) > 1: # Caso seja ambiguo (a-> B,C)
+                est = f"{'{'+estado+'}'}"
+            else:
+                est = estado
+            Qo = est if estado not in self.F else "*"+est # Caso seja estado final
+            if estado == self.Qo:
+                Qo = "->"+Qo # Caso seja estado inicial
+            tam = len(Qo)
+            string += ((5-tam//2)*" ")+Qo+((6-tam//2)*" ")+"|" # Estado Inicial
+            for alf in SIMBOLOS:
+                if estado in list(self.Transicoes.keys()) and alf in list(self.Transicoes[estado].keys()):
+                    est = self.Transicoes[estado][alf]
+                    if len(est.split(',')) > 1: # Caso seja ambiguo (a-> B,C)
+                        est = f"{'{'+est+'}'}"
+                else:
+                    est = "--"
+                tam = len(est)
+                string += ((5-tam//2)*" ")+est+((5-tam//2)*" ")+"|"
+            string = string[:-1] + "\n"+TRACO+"\n"
+        return string
+
     def fechamento_ep(self, estado):
         fechamento = set([estado])
         pilha = [estado]
@@ -77,7 +118,6 @@ class AF():
         novas_transicoes = [[list(estado), simbolo, list(fechamento)] for estado, simbolo, fechamento in novas_transicoes]
         return novas_transicoes
                     
-    
     def convert_to_AFD(self): #TODO: ajeitar variaveis e comentar
         dfa_states = set()
         dfa_transitions = []
@@ -141,8 +181,7 @@ class AF():
         #print(nao_terminais)
         simbolo_inicial = nao_terminais[self.Estados.index(self.Qo)]
         #print(simbolo_inicial)
-            
-        
+
         estados_finais = []
         for estado_aceitacao in self.F:
             #regras.append([nao_terminais[self.Estados.index(estado_aceitacao)], '$'])
@@ -166,3 +205,97 @@ class AF():
         GR_resultante = GR(nao_terminais, self.Alfabeto, regras, simbolo_inicial)
         return GR_resultante
                         
+    def minimiza_AFD(self): # Minimiza Automato finito
+        # Ajusta todos os estados em Finais e NãoFinais
+        Conjuntos = [list(set(self.Estados) - set(self.F)), self.F]
+        NovoConjunto = []
+        while True: # Enquanto não alterar
+            for conj in Conjuntos:
+                subConj = []
+                for est in conj:
+                    b = False
+                    for cj in subConj:
+                        if est in cj:
+                            break
+                    else:
+                        subConj.append([est])
+                        dest = pegaEnderecoConjunto(est, self.Transicoes, Conjuntos, self.Alfabeto) # Pega os destinos
+                        for i in conj:
+                            for cj in subConj:
+                                if i in cj:
+                                    break
+                            else:
+                                if pegaEnderecoConjunto(i, self.Transicoes, Conjuntos, self.Alfabeto, dest): # Compara os destinos
+                                    subConj[-1].append(i)
+                NovoConjunto += subConj
+            if len(Conjuntos) == len(NovoConjunto): # Caso tenham os mesmos numeros de conjuntos
+                for c in Conjuntos:
+                    for n in NovoConjunto:
+                        #print(sorted(n),sorted(c))
+                        if sorted(n) == sorted(c):
+                            break
+                    else: # Não achou igual
+                        break
+                else:
+                    break
+            Conjuntos, NovoConjunto = NovoConjunto.copy(), []
+        #print("Novo> ",NovoConjunto)
+        # -=-=-=-=-=-=- Reajusta o Automato =-=-=-=-=-=-=-=-=-=-=-=-=
+        self.Estados = [f"E{n}" for n in range(len(Conjuntos))]
+        # -=-=-=- Novos estados Finais e inicial -=-=-=-
+        novoFim = []
+        for ind,conj in enumerate(Conjuntos): 
+            if self.Qo in conj:
+                self.Qo = f"E{ind}"
+            for f in self.F:
+                if f in conj:
+                    novoFim.append(f"E{ind}")
+                    break
+        self.F = novoFim
+
+        # -=-=-=-=-=-= Novas Transições -=-=-=-=-=-=-
+        novaTrans = {} #{estado:{simbolo:estado}}
+        for n in range(len(Conjuntos)):
+            dest = pegaEnderecoConjunto(Conjuntos[n][0], self.Transicoes, Conjuntos, self.Alfabeto)
+            #print(dest)
+            for a,i in zip(self.Alfabeto, dest):
+                if Conjuntos[n][0] in list(self.Transicoes.keys()) and a in list(self.Transicoes[Conjuntos[n][0]].keys()):
+                    if f"E{n}" not in list(novaTrans.keys()):
+                        novaTrans[f"E{n}"] = {}
+                    novaTrans[f"E{n}"][a] = f"E{i}"
+        self.Transicoes = novaTrans
+
+
+def pegaEnderecoConjunto(est, transicoes, Conjuntos, alfabeto, destino=None):
+    if destino is None: # Pega os conjuntos de cada transição ("--" quando não tem transição)
+        if est not in list(transicoes.keys()):
+            return ["--" for i in range(len(alfabeto))]
+        dest = []
+        for i in alfabeto:
+            if i in list(transicoes[est].keys()):
+                for ind, l in enumerate(Conjuntos):
+                    #print(transicoes[est][i], l)
+                    if transicoes[est][i] in l:
+                        dest.append(ind)
+                        break
+                else:
+                    print("Não achou")
+            else:
+                dest.append("--")
+        #print("Destino: ",dest)
+        return dest
+    else: # Verifica se aponta pros mesmos Conjuntos
+        if est not in list(transicoes.keys()):
+            if destino.all("--"):
+                return True
+            return False
+        for i,d in zip(alfabeto, destino):
+            if i in list(transicoes[est].keys()): # Caso tenha uma transição
+                if d == "--" or transicoes[est][i] not in Conjuntos[d]:
+                    #print("Destino diferente")
+                    return False
+            elif d != "--": # Caso não tenha transição e o destino tenha
+                #print("Destino diferente")
+                return False
+        #print("Mesmo Destino")
+        return True
