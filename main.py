@@ -1,6 +1,18 @@
 from Gramatica_Regular import GR
 from Automato_finito import AF
 
+# AF(
+#  [estados],
+#  [alfabeto],
+#  {estados: {simbolo:estadosDestino},
+#            {simbolo:estadosDestino},
+#            {simbolo:estadosDestino}
+#            },
+#  Qo,
+#  [Estados Finais]
+# )
+
+
 automata = AF(['q0', 'q1', 'q2', 'q3'],
               ['a', 'b'],
               {'q0':{'a':'q1'},
@@ -35,7 +47,9 @@ print(automatoParaMinimizar)
 automatoParaMinimizar.minimiza_AFD()
 print(automatoParaMinimizar)
 #closure = automato2.fechamento_ep('q1')
+print(automata)
 #automata_DFA = automata.convert_to_AFD()
+#print(automata_DFA)
 #Gramatica = automata_DFA.convert_to_GR()
 #AFND_final = Gramatica.convert_to_AFND()
 #print(automata_DFA)
