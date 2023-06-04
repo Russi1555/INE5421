@@ -31,22 +31,27 @@ class ER:
         p = len(self.expressao)-1 # i passa pela expressão
         raiz = Node('.', dir=Node('#', first=set([h+1]), last=set([h+1])))
         raiz.esq = self.SubArvore()
-
         # -=-=-=-=-=-=-=-=-=-=-=- Pega o automato da Árvore -=-=-=-=-=-=-=-=-=-=-=-=-=-
         ValorDoFinal = list(raiz.dir.last)[0]
         global follows
         follows = {i:set() for i in range(1, ValorDoFinal+1)}
-        self.PegaFollow(raiz)
-
+        ini = self.PegaFollow(raiz)[0]
+        #print(f"Inicial: {ini}, Final:{fim}, Vazio:{vazio}")
+        #print(follows)
         # Pega o estado inicial -=-=-=-=-=--=-=
         Qo = ""
-        for i in follows[1]:
+        for i in ini:
             Qo += str(i)
         Estados = [Qo]
 
         # Pega as transições e estados finais -=-=-=-=-=-
-        Final = []; Transicoes = {Qo:{}}
+        if ValorDoFinal in follows[1]:
+            Final = [Qo]
+        else:
+            Final = []
+        Transicoes = {Qo:{}}
         PilhaEstados = [Qo]
+        #print(simbolos)
         while PilhaEstados:
             estadoAtual = PilhaEstados.pop(0)
             for simb in self.alfabeto:
@@ -56,39 +61,40 @@ class ER:
                         est = est | follows[val]
                 if est:
                     Qi = ""
-                    for i in sorted(est):
+                    for i in est:
                         Qi += str(i)
-                    if ValorDoFinal in est: # Caso seja um estado final
+                    if ValorDoFinal in est and Qi not in Final: # Caso seja um estado final
                         Final.append(Qi)
                     if estadoAtual in Transicoes.keys():
                         Transicoes[estadoAtual][simb] = Qi
                     else:
                         Transicoes[estadoAtual] = {simb:Qi}
-                    PilhaEstados.append(Qi)
-
+                    if Qi not in Estados:
+                        PilhaEstados.append(Qi)
+                        Estados.append(Qi)
         return AF(Estados, self.alfabeto, Transicoes, Qo, Final)
 
     def SubArvore(self):
-        global simbolos, h, p
+        global simbolos, p
         nodo = self.Folha()
         if p < 0 or nodo is None:
             return nodo
+        if self.expressao[p] == '.':
+            p -= 1
         str1 = self.expressao[p]
 
         if str1 == '|':
             p -= 1
-            return Node('.', dir=Node('|', dir=nodo, esq=self.Folha()), esq=self.SubArvore()) 
+            nodos = Node('|', dir=nodo, esq=self.Folha())
+            if p >= 0 and self.expressao[p] == '(':
+                return nodos
+            return Node('.', dir=nodos, esq=self.SubArvore())
 
-        elif str1 in self.alfabeto+['&','.','*']:
+        elif str1 in self.alfabeto+['&','*',')']:
             node2 = self.SubArvore()
             if node2 is None:
                 return nodo
             return Node('.', dir=nodo, esq=node2)
-        
-        elif str1 == ')':
-            if nodo is None:
-                return self.SubArvore()
-            return Node('.', dir=nodo, esq=self.SubArvore())    
 
         elif str1 == '(':
             return nodo
@@ -104,6 +110,7 @@ class ER:
             return Node('*', esq=self.Folha())
         
         elif str1 in self.alfabeto:
+            simbolos[str1].append(h)
             h -= 1
             return Node(str1, first=set([h+1]), last=set([h+1]))
         
@@ -129,19 +136,19 @@ class ER:
                 raiz.dir.first, raiz.dir.last, raiz.dir.vazio = self.PegaFollow(raiz.dir)
 
         if raiz.valor in self.alfabeto+['&','#']:
-            return (raiz.first, raiz.last, raiz.valor)
+            return (raiz.first, raiz.last, raiz.vazio)
 
         elif raiz.valor == '.':
             for i in raiz.esq.last:
-                follows[i] = set(sorted(follows[i] | raiz.dir.first))
-            ini = raiz.esq.first if not raiz.esq.vazio else set(sorted(raiz.esq.first | raiz.dir.first))
-            fim = raiz.dir.last if not raiz.dir.vazio else set(sorted(raiz.esq.last | raiz.dir.last))
+                follows[i] = follows[i] | raiz.dir.first
+            ini = raiz.esq.first if not raiz.esq.vazio else raiz.esq.first | raiz.dir.first
+            fim = raiz.dir.last if not raiz.dir.vazio else raiz.esq.last | raiz.dir.last
             return (ini, fim, raiz.dir.vazio and raiz.esq.vazio)
 
         elif raiz.valor == '*':
             for i in raiz.esq.last:
-                follows[i] = set(sorted(follows[i] | raiz.esq.first))
+                follows[i] = follows[i] | raiz.esq.first
             return (raiz.esq.first, raiz.esq.last, True)
 
         elif raiz.valor == '|':
-            return (set(sorted(raiz.dir.first | raiz.esq.first)), set(sorted(raiz.dir.last | raiz.esq.last)), raiz.dir.vazio or raiz.esq.vazio)
+            return (raiz.dir.first | raiz.esq.first, raiz.dir.last | raiz.esq.last, raiz.dir.vazio or raiz.esq.vazio)

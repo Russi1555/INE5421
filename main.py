@@ -43,7 +43,7 @@ automatoParaMinimizar = AF(['A','B','C','D','E','F','G','H'],
                            'A',
                            ['A','D','G'])
 
-expressaoRegular = ER("aa|(bb)*b", ['a','b'])
+expressaoRegular = ER("(a|b)*abb", ['a','b'])
 AFD = expressaoRegular.ER_para_AFD()
 print(AFD)
 #state = '3'
