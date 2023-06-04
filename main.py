@@ -1,5 +1,6 @@
 from Gramatica_Regular import GR
 from Automato_finito import AF
+from Expressao_Regular import ER
 
 # AF(
 #  [estados],
@@ -42,12 +43,15 @@ automatoParaMinimizar = AF(['A','B','C','D','E','F','G','H'],
                            'A',
                            ['A','D','G'])
 
+expressaoRegular = ER("aa|(bb)*b", ['a','b'])
+AFD = expressaoRegular.ER_para_AFD()
+print(AFD)
 #state = '3'
-print(automatoParaMinimizar)
-automatoParaMinimizar.minimiza_AFD()
-print(automatoParaMinimizar)
+#print(automatoParaMinimizar)
+#automatoParaMinimizar.minimiza_AFD()
+#print(automatoParaMinimizar)
 #closure = automato2.fechamento_ep('q1')
-print(automata)
+#print(automata)
 #automata_DFA = automata.convert_to_AFD()
 #print(automata_DFA)
 #Gramatica = automata_DFA.convert_to_GR()
