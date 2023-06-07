@@ -8,7 +8,7 @@ class AF():
         self.Transicoes = Transicao #{estado:{simbolo:estado}}
         self.Qo = Qo
         self.F = F
-        # Verifica se tem transição por epsilon
+        # Verifica se tem transição por epsilon, para colocar mais uma coluna na tabela
         self.epsilon = False
         for dic in Transicao.values():
             if '&' in list(dic.keys()):
@@ -206,6 +206,7 @@ class AF():
         return GR_resultante
                         
     def minimiza_AFD(self): # Minimiza Automato finito
+        self.removeInacessivel_e_Mortos()
         # Ajusta todos os estados em Finais e NãoFinais
         Conjuntos = [list(set(self.Estados) - set(self.F)), self.F]
         NovoConjunto = []
@@ -265,8 +266,54 @@ class AF():
                     novaTrans[f"E{n}"][a] = f"E{i}"
         self.Transicoes = novaTrans
 
+    def removeInacessivel_e_Mortos(self):
+        global acesso, transicoes
+        transicoes = self.Transicoes
+        acesso = set([self.Qo])
+        PassaEstados(self.Qo) # Inacessiveis
 
-def pegaEnderecoConjunto(est, transicoes, Conjuntos, alfabeto, destino=None):
+        for l in range(2):        
+            estFora = set(self.Estados) - acesso
+            deletar = []
+            for i in estFora:
+                if i in list(self.Transicoes.keys()):
+                    del self.Transicoes[i]
+                    self.Estados.remove(i)
+                for k,v in self.Transicoes.items():
+                    for k2,v2 in v.items():
+                        if v2 == i:
+                            deletar.append((k, k2))
+            for i in deletar:
+                if i[0] in list(self.Transicoes.keys()):
+                    del self.Transicoes[i[0]][i[1]]
+            # -=-=-=-=-=-=-=-=-=-=-=- Remove estados Mortos -=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+            transicoes = self.Transicoes
+            acesso = set(self.F)
+            for i in self.F:
+                VoltaEstados(i) # Mortos
+
+        
+
+def VoltaEstados(est): # Para achar estados Mortos
+    global acesso, transicoes
+    for k,g in transicoes.items():
+        if k not in acesso and est in list(g.values()):
+            acesso.add(k)
+            VoltaEstados(k)
+    return
+    
+
+def PassaEstados(est): # Para achar estados inacessiveis
+    global acesso, transicoes
+    if est not in list(transicoes.keys()):
+        return
+    for i in transicoes[est].values():
+        if i not in acesso:
+            acesso.add(i)
+            PassaEstados(i)
+    return
+
+def pegaEnderecoConjunto(est, transicoes, Conjuntos, alfabeto, destino=None): # Para Minimizar o AFD
     if destino is None: # Pega os conjuntos de cada transição ("--" quando não tem transição)
         if est not in list(transicoes.keys()):
             return ["--" for i in range(len(alfabeto))]
@@ -286,7 +333,7 @@ def pegaEnderecoConjunto(est, transicoes, Conjuntos, alfabeto, destino=None):
         return dest
     else: # Verifica se aponta pros mesmos Conjuntos
         if est not in list(transicoes.keys()):
-            if destino.all("--"):
+            if all(elemento == '--' for elemento in destino):
                 return True
             return False
         for i,d in zip(alfabeto, destino):

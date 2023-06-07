@@ -42,14 +42,29 @@ automatoParaMinimizar = AF(['A','B','C','D','E','F','G','H'],
                             'H':{'0':'H','1':'D'}},
                            'A',
                            ['A','D','G'])
+teste21 = AF(['S','A','B','C','D','E','F','G', 'H'],
+            ['a', 'b'],
+            {'S':{'a':'A','b':'E'},
+            'A':{'a':'B', 'b':'F'},
+            'B':{'a':'A', 'b':'C'},
+            'C':{'a':'G', 'b':'D'},
+            'D':{'a':'C', 'b':'G'},
+            'E':{'b':'F'},
+            'F':{'a':'G'},
+            'G':{'a':'F'},
+            'H':{'b':'D'}},
+            'S',
+            ['C','D'])
 
-expressaoRegular = ER("(a|b)*abb", ['a','b'])
-AFD = expressaoRegular.ER_para_AFD()
-print(AFD)
+
+
+#expressaoRegular = ER("(a|b)*abb", ['a','b'])
+#AFD = expressaoRegular.ER_para_AFD()
+#print(AFD)
 #state = '3'
-#print(automatoParaMinimizar)
-#automatoParaMinimizar.minimiza_AFD()
-#print(automatoParaMinimizar)
+print(teste21)
+teste21.minimiza_AFD()
+print(teste21)
 #closure = automato2.fechamento_ep('q1')
 #print(automata)
 #automata_DFA = automata.convert_to_AFD()
