@@ -308,7 +308,40 @@ class AF():
             for i in self.F:
                 VoltaEstados(i) # Mortos
 
-        
+    def Uniao_AFs(self, OutroAF):
+        Qo = "S"
+        while Qo in self.Estados or Qo in OutroAF.Estados:
+            Qo += "'"
+        # Salva o equivalente dos estados -=-=-=-=-=-=-=-=-=-=-=-=-
+        TabelaEstados = {i:f"E{h}" for h,i in enumerate(self.Estados)}
+        TabelaEstados2 = {i:f"E{h}" for h,i in zip(range(len(self.Estados), len(self.Estados)+len(OutroAF.Estados)),OutroAF.Estados)}
+        # -=-=-=-=-=-=-=- Traduz as Transições -=-=-=-=-=-=-=-=-=
+        novaTransicao = {Qo:{'&':f"{TabelaEstados[self.Qo]},{TabelaEstados2[OutroAF.Qo]}"}}
+
+        for k,v in self.Transicoes.items():
+            for k2,v2 in v.items():
+                est = v2.split(',')
+                nova = {k2:TabelaEstados[est[0]]}
+                if len(est) > 1:
+                    for i in est[1:]:
+                        nova[k2] += f",{TabelaEstados[i]}"
+                novaTransicao[TabelaEstados[k]] = nova
+            
+        for k,v in OutroAF.Transicoes.items():
+            for k2,v2 in v.items():
+                est = v2.split(',')
+                nova = {k2:TabelaEstados2[est[0]]}
+                if len(est) > 1:
+                    for i in est[1:]:
+                        nova[k2] += f",{TabelaEstados2[i]}"
+                novaTransicao[TabelaEstados2[k]] = nova
+        # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+        return AF([Qo]+[f"E{i}" for i in range(len(self.Estados+OutroAF.Estados))], 
+                    list(set(self.Alfabeto+OutroAF.Alfabeto)), novaTransicao, Qo,
+                     list(map(lambda x: TabelaEstados[x],self.F))+list(map(lambda x: TabelaEstados2[x],OutroAF.F)))
+
+    def Intersecao_AFs(self):
+        pass
 
 def VoltaEstados(est): # Para achar estados Mortos
     global acesso, transicoes

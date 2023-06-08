@@ -44,6 +44,9 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             'S',
                             ['C','D'])
 
+
+NOVO_AF = automato.Uniao_AFs(automato2)
+print(NOVO_AF)
 print("Verdadeiro ", automato.TestaPalavra("abbaa"))
 print("Falso ", automato.TestaPalavra("bbb"))
 print("Falso ", automato.TestaPalavra("aba"))
