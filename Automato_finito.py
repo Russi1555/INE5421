@@ -204,7 +204,7 @@ class AF():
        # print(regras)
         GR_resultante = GR(nao_terminais, self.Alfabeto, regras, simbolo_inicial)
         return GR_resultante
-                        
+
     def minimiza_AFD(self): # Minimiza Automato finito
         self.removeInacessivel_e_Mortos()
         # Ajusta todos os estados em Finais e NãoFinais
@@ -265,7 +265,23 @@ class AF():
                         novaTrans[f"E{n}"] = {}
                     novaTrans[f"E{n}"][a] = f"E{i}"
         self.Transicoes = novaTrans
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    def TestaPalavra(self, palavra):
+        return self.TesteSimbolo(0, self.Qo, palavra)
+    
+    def TesteSimbolo(self, index, est, palavra):
+        if est in self.F and index >= len(palavra):
+            return True
 
+        elif est in list(self.Transicoes.keys()):
+            if '&' in list(self.Transicoes[est].keys()) or (palavra and index < len(palavra) and palavra[index] in list(self.Transicoes[est].keys())):
+                for g,h in self.Transicoes[est].items():
+                    if g == '&' or (palavra and index < len(palavra) and palavra[index] == g):
+                        for i in self.Transicoes[est][g].split(','):
+                            if self.TesteSimbolo(index+1 if h != '&' else index, i, palavra):
+                                return True
+        return False
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     
     def removeInacessivel_e_Mortos(self):
         global acesso, transicoes
         transicoes = self.Transicoes
@@ -302,7 +318,6 @@ def VoltaEstados(est): # Para achar estados Mortos
             VoltaEstados(k)
     return
     
-
 def PassaEstados(est): # Para achar estados inacessiveis
     global acesso, transicoes
     if est not in list(transicoes.keys()):
