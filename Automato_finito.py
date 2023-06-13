@@ -80,32 +80,34 @@ class AF():
 
          #   print(fechamento)
            # print(novo_inicial)
-
-            for estados_ep in [fechamento]:
-                estado_atual = estados_ep[0]
-                if estado_atual not in self.Estados:
-                    self.Estados.append(estado_atual)
-                    sub_estados = estado_atual.split(',')
-                    #print(sub_estados)
-                    novas_transicoes = {}
-                    for simbolo in self.Alfabeto:
-                        estado_destino = ""
-                        for estado in sub_estados: 
-                            if simbolo in self.Transicoes[estado]:
-                                if estado_destino == '':
-                                    estado_destino = estado_destino + str(self.Transicoes[estado][simbolo])
-                                # print(estado_destino)
-                                else:
-                                    estado_destino =  estado_destino + "," + str(self.Transicoes[estado][simbolo])
+            print(len(fechamento))
+            
+            if len(fechamento) > 0:
+                for estados_ep in [fechamento]:
+                    estado_atual = estados_ep[0]
+                    if estado_atual not in self.Estados:
+                        self.Estados.append(estado_atual)
+                        sub_estados = estado_atual.split(',')
+                        #print(sub_estados)
+                        novas_transicoes = {}
+                        for simbolo in self.Alfabeto:
+                            estado_destino = ""
+                            for estado in sub_estados: 
+                                if simbolo in self.Transicoes[estado]:
+                                    if estado_destino == '':
+                                        estado_destino = estado_destino + str(self.Transicoes[estado][simbolo])
+                                    # print(estado_destino)
+                                    else:
+                                        estado_destino =  estado_destino + "," + str(self.Transicoes[estado][simbolo])
                         
-                        novas_transicoes[simbolo] = estado_destino
-                    if estado_destino not in fechamento:
-                            self.Estados.append(estado_destino)
+                            novas_transicoes[simbolo] = estado_destino
+                        if estado_destino not in fechamento:
+                                self.Estados.append(estado_destino)
                 
-                resultado_transicoes = self.Transicoes.copy()
-                resultado_transicoes[estado_atual] = novas_transicoes
+                    resultado_transicoes = self.Transicoes.copy()
+                    resultado_transicoes[estado_atual] = novas_transicoes
 
-                self.Transicoes = resultado_transicoes
+                    self.Transicoes = resultado_transicoes
             
        # return resultado_transicoes
     # AF(
