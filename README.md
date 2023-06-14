@@ -2,7 +2,7 @@
 
 ## Manipulação de Linguagens Regulares e Linguagens Livres de Contexto
 
- - [ ]  Conversão de AFND (com e sem ε) para AFD (0,5pt)
+ - [x]  Conversão de AFND (com e sem ε) para AFD (0,5pt)
  - [ ]  Conversão de AFD para GR e de GR para AFND (0,5pt) 
  - [x]  Minimização de AFD (1,0pt) 
  - [x]  União e interseção de AFD (1,0pt)
