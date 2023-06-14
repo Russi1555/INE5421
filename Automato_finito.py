@@ -74,7 +74,6 @@ class AF():
 
         while fila:
             estado = fila.pop(0)
-        #    print("Estado atual: " + str(estado))
             if estado in SELF_Transicoes and '&' in SELF_Transicoes[estado]:
                 prox_estados = (str(estado) + ',' + str(SELF_Transicoes[estado]['&']))
                 if prox_estados not in fechamento:
@@ -86,10 +85,7 @@ class AF():
                     fechamento.append(novos_estados)
                     fila.extend(novos_estados)
                     #Até aqui descobre os &-fecho. Agora vamos adicionar as transições dele.
-            
 
-         #   print(fechamento)
-           # print(novo_inicial)
             if fechamento:
                 for estados_ep in [fechamento]:
                     estado_atual = estados_ep[0]
@@ -135,7 +131,7 @@ class AF():
                     if simbolo != '&':
                         estado_destino = ""
                         for subestado in subestados:
-                            if simbolo in SELF_Transicoes[subestado]:
+                            if subestado in SELF_Transicoes.keys() and simbolo in SELF_Transicoes[subestado]:
                                 #print("ESTADO ATUAL DE DESTINO: " + estado_destino)
                                 if subestado not in estado_destino:
                                 #   print("SUBESTADO: "+str(subestado)+" NAO ESTÁ EM "+ str(estado_destino))
@@ -304,6 +300,11 @@ class AF():
                         for i in self.Transicoes[est][g].split(','):
                             if self.TesteSimbolo(index+1 if h != '&' else index, i, palavra):
                                 return True
+        elif any(ele in list(self.Transicoes.keys()) for ele in est.split(',')):
+            for es in est.split(','):
+                if es in self.Transicoes.keys() and ('&' in list(self.Transicoes[es].keys()) or (palavra and index < len(palavra) and palavra[index] in list(self.Transicoes[es].keys()))):
+                    if self.TesteSimbolo(index, es, palavra):
+                        return True
         return False
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=     
     def removeInacessivel_e_Mortos(self):
@@ -335,36 +336,30 @@ class AF():
                 VoltaEstados(i) # Mortos
 
     def Uniao_AFs(self, OutroAF):
-        Qo = "S"
-        while Qo in self.Estados or Qo in OutroAF.Estados:
-            Qo += "'"
-        # Salva o equivalente dos estados -=-=-=-=-=-=-=-=-=-=-=-=-
-        TabelaEstados = {i:f"q{h}" for h,i in enumerate(self.Estados)}
-        TabelaEstados2 = {i:f"q{h}" for h,i in zip(range(len(self.Estados), len(self.Estados)+len(OutroAF.Estados)),OutroAF.Estados)}
-        # -=-=-=-=-=-=-=- Traduz as Transições -=-=-=-=-=-=-=-=-=
-        novaTransicao = {Qo:{'&':f"{TabelaEstados[self.Qo]},{TabelaEstados2[OutroAF.Qo]}"}}
+        A_Transicao, A_Estados, A_Qo, A_F, h = MudaEstados(self.Transicoes, self.Estados, self.Alfabeto, self.Qo, self.F)
 
-        for k,v in self.Transicoes.items():
-            for k2,v2 in v.items():
-                est = v2.split(',')
-                nova = {k2:TabelaEstados[est[0]]}
-                if len(est) > 1:
-                    for i in est[1:]:
-                        nova[k2] += f",{TabelaEstados[i]}"
-                novaTransicao[TabelaEstados[k]] = nova
-            
-        for k,v in OutroAF.Transicoes.items():
-            for k2,v2 in v.items():
-                est = v2.split(',')
-                nova = {k2:TabelaEstados2[est[0]]}
-                if len(est) > 1:
-                    for i in est[1:]:
-                        nova[k2] += f",{TabelaEstados2[i]}"
-                novaTransicao[TabelaEstados2[k]] = nova
-        # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-        return AF([Qo]+[f"E{i}" for i in range(len(self.Estados+OutroAF.Estados))], 
-                    list(set(self.Alfabeto+OutroAF.Alfabeto)), novaTransicao, Qo,
-                     list(map(lambda x: TabelaEstados[x],self.F))+list(map(lambda x: TabelaEstados2[x],OutroAF.F)))
+        B_Transicao, B_Estados, B_Qo, B_F = MudaEstados(OutroAF.Transicoes, OutroAF.Estados, OutroAF.Alfabeto, OutroAF.Qo, OutroAF.F, h)[:4]
+
+        Novo_alfabeto = list(set(self.Alfabeto) | set(OutroAF.Alfabeto))
+
+        A_Transicao.update(B_Transicao)
+
+        Novo_Qo = 'S'
+
+        A_Estados.insert(0,Novo_Qo)
+
+        A_Transicao[Novo_Qo] = {'&':f"{A_Qo},{B_Qo}"}
+
+        Final = A_F+B_F
+
+        return AF(A_Estados+B_Estados, Novo_alfabeto, A_Transicao, Novo_Qo, Final).convert_to_AFD()
+
+        """Novo_Final = []
+        for est in NovoAF.Estados:
+            if any(Qi in Final for Qi in est.split(',')):
+                Novo_Final.append(est)
+
+        return AF(NovoAF.Estados, NovoAF.Alfabeto, NovoAF.Transicoes, NovoAF.Qo, Novo_Final)"""
 
     def Interseccao_AFs(self, OutroAF): # Não testado, falta alterar
         A_Transicao, A_Estados, A_Qo, A_F, h = MudaEstados(self.Transicoes, self.Estados, self.Alfabeto, self.Qo, self.F)
@@ -375,27 +370,22 @@ class AF():
 
         A_Transicao.update(B_Transicao)
 
-        Novo_Qo = f"{A_Qo},{B_Qo}"
-        novo_Estados = [Novo_Qo]
-        tempEstados = [Novo_Qo]
-        NovoF = []
-        if any(ele in A_F for ele in Novo_Qo.split(',')) and any(ele in B_F for ele in Novo_Qo.split(',')):
-            NovoF.append(Novo_Qo)
-        
-        while tempEstados:
-            est = tempEstados.pop(0)
-            for alf in Novo_alfabeto:
-                novEst = ""
-                for i in est.split(','):
-                    if i in A_Transicao.keys() and alf in A_Transicao[i].keys():
-                        novEst += f"{A_Transicao[i][alf]},"
-                if novEst[:-1] != "" and novEst[:-1] not in novo_Estados:
-                    tempEstados.append(novEst[:-1])
-                    novo_Estados.append(novEst[:-1])
-                    if any(ele in A_F for ele in novEst[:-1].split(',')) and any(ele in B_F for ele in novEst[:-1].split(',')):
-                        NovoF.append(novEst[:-1])
+        Novo_Qo = 'S'
 
-        return AF(novo_Estados, Novo_alfabeto, A_Transicao, Novo_Qo, NovoF)
+        A_Estados.insert(0,Novo_Qo)
+
+        A_Transicao[Novo_Qo] = {'&':f"{A_Qo},{B_Qo}"}
+
+        Final = A_F+B_F
+
+        NOVO_AF = AF(A_Estados+B_Estados, Novo_alfabeto, A_Transicao, Novo_Qo, Final).convert_to_AFD()
+
+        Novo_Final = []
+        for est in NOVO_AF.Estados:
+            if any(Qi in A_F for Qi in est.split(',')) and any(Qi in B_F for Qi in est.split(',')):
+                Novo_Final.append(est)
+
+        return AF(NOVO_AF.Estados, NOVO_AF.Alfabeto, NOVO_AF.Transicoes, NOVO_AF.Qo, Novo_Final)
 
 def MudaEstados(transicao, estados, alfabeto, Qo, F, h=0):
     # -=-=-=-=-=-= Novos Estados -=-=-=-=-=--=
