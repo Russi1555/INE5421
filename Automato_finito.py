@@ -28,7 +28,7 @@ class AF():
         for i in self.Alfabeto: # Coloca a parte do alfabeto
             string += f"    {i}     |"
 
-        SIMBOLOS = self.Alfabeto
+        SIMBOLOS = self.Alfabeto.copy()
         if self.epsilon:
             string += f"\033[91m     ε    \033[0m|"
             SIMBOLOS += ['&']
@@ -47,12 +47,19 @@ class AF():
             tam = len(Qo)
             string += ((5-tam//2)*" ")+Qo+((6-tam//2)*" ")+"|" # Estado Inicial
             for alf in SIMBOLOS:
-                if estado in list(self.Transicoes.keys()) and alf in list(self.Transicoes[estado].keys()):
-                    est = self.Transicoes[estado][alf]
-                    if len(est.split(',')) > 1: # Caso seja ambiguo (a-> B,C)
-                        est = f"{'{'+est+'}'}"
-                else:
-                    est = "--"
+                es = ""
+                if estado not in list(self.Transicoes.keys()):
+                    for est in estado.split(','):
+                        if est in list(self.Transicoes.keys()) and alf in list(self.Transicoes[est].keys()):
+                            es += f"{self.Transicoes[est][alf]},"
+                    es = es[:-1]
+                elif alf in list(self.Transicoes[estado].keys()):
+                    es = self.Transicoes[estado][alf]
+
+                if len(es.split(',')) > 1: # Caso seja ambiguo (a-> B,C)
+                    es = f"{'{'+es+'}'}"
+                elif es == "":
+                    es = "--"
                 tam = len(est)
                 string += ((5-tam//2)*" ")+est+((5-tam//2)*" ")+"|"
             string = string[:-1] + "\n"+TRACO+"\n"
@@ -60,17 +67,20 @@ class AF():
 
     def epsilon_fechamento(self):
         fechamento = []
+        SELF_Transicoes = self.Transicoes.copy()
         fila = self.Estados.copy()
+        SELF_Estados = self.Estados.copy()
+        SELF_Qo = self.Qo
 
         while fila:
             estado = fila.pop(0)
         #    print("Estado atual: " + str(estado))
-            if estado in self.Transicoes and '&' in self.Transicoes[estado]:
-                prox_estados = (str(estado) + ',' + str(self.Transicoes[estado]['&']))
+            if estado in SELF_Transicoes and '&' in SELF_Transicoes[estado]:
+                prox_estados = (str(estado) + ',' + str(SELF_Transicoes[estado]['&']))
                 if prox_estados not in fechamento:
-                    if estado == self.Qo:
-                        self.Estados.remove(self.Qo)
-                        self.Qo = prox_estados
+                    if estado == SELF_Qo:
+                        SELF_Estados.remove(SELF_Qo)
+                        SELF_Qo = prox_estados
 
                     novos_estados = prox_estados
                     fechamento.append(novos_estados)
@@ -80,55 +90,39 @@ class AF():
 
          #   print(fechamento)
            # print(novo_inicial)
-            print(len(fechamento))
-            
-            if len(fechamento) > 0:
+            if fechamento:
                 for estados_ep in [fechamento]:
                     estado_atual = estados_ep[0]
-                    if estado_atual not in self.Estados:
-                        self.Estados.append(estado_atual)
+                    if estado_atual not in SELF_Estados:
+                        SELF_Estados.append(estado_atual)
                         sub_estados = estado_atual.split(',')
                         #print(sub_estados)
                         novas_transicoes = {}
                         for simbolo in self.Alfabeto:
                             estado_destino = ""
                             for estado in sub_estados: 
-                                if simbolo in self.Transicoes[estado]:
+                                if simbolo in SELF_Transicoes[estado]:
                                     if estado_destino == '':
-                                        estado_destino = estado_destino + str(self.Transicoes[estado][simbolo])
+                                        estado_destino = estado_destino + str(SELF_Transicoes[estado][simbolo])
                                     # print(estado_destino)
                                     else:
-                                        estado_destino =  estado_destino + "," + str(self.Transicoes[estado][simbolo])
-                        
+                                        estado_destino =  estado_destino + "," + str(SELF_Transicoes[estado][simbolo])
+                            
                             novas_transicoes[simbolo] = estado_destino
                         if estado_destino not in fechamento:
-                                self.Estados.append(estado_destino)
-                
-                    resultado_transicoes = self.Transicoes.copy()
+                                SELF_Estados.append(estado_destino)
+                    
+                    resultado_transicoes = SELF_Transicoes.copy()
                     resultado_transicoes[estado_atual] = novas_transicoes
 
-                    self.Transicoes = resultado_transicoes
-            
-       # return resultado_transicoes
-    # AF(
-        #  [estados],
-        #  [alfabeto],
-        #  {estados: {simbolo:estadosDestino},
-        #            {simbolo:estadosDestino},
-        #            {simbolo:estadosDestino}
-        #            },
-        #  Qo,
-        #  [Estados Finais]
-        # )
-
+                    SELF_Transicoes = resultado_transicoes
+        return (SELF_Transicoes, SELF_Estados, SELF_Qo)
 
     def convert_to_AFD(self):
-        self.epsilon_fechamento()
-        fila = self.Estados.copy()
-
+        SELF_Transicoes, SELF_Estados, SELF_Qo = self.epsilon_fechamento()
+        fila = SELF_Estados.copy()
         novo_Transicoes = {}
         
-
         while fila:
             #print("FILA: " + str(fila))
             estado = fila.pop(0)
@@ -141,25 +135,25 @@ class AF():
                     if simbolo != '&':
                         estado_destino = ""
                         for subestado in subestados:
-                            if simbolo in self.Transicoes[subestado]:
+                            if simbolo in SELF_Transicoes[subestado]:
                                 #print("ESTADO ATUAL DE DESTINO: " + estado_destino)
                                 if subestado not in estado_destino:
                                 #   print("SUBESTADO: "+str(subestado)+" NAO ESTÁ EM "+ str(estado_destino))
                                     if estado_destino == '':
-                                        estado_destino = estado_destino + str(self.Transicoes[subestado][simbolo])
+                                        estado_destino = estado_destino + str(SELF_Transicoes[subestado][simbolo])
                                     else:
-                                        for subsubestado in self.Transicoes[subestado][simbolo].split(','):
+                                        for subsubestado in SELF_Transicoes[subestado][simbolo].split(','):
                                             if subsubestado not in estado_destino:
                                                 estado_destino =  estado_destino + "," + subsubestado
                            # print("ESTADO ATUAL DE DESTINO 2: " + estado_destino)
                     
                         novas_transicoes[simbolo] = estado_destino
                     
-                    if estado_destino not in self.Estados and estado_destino != "":
+                    if estado_destino not in SELF_Estados and estado_destino != "":
                         #print("Estado destino: " + str(estado_destino))
                         #print(estado_destino)
                         estado_destino = str(estado_destino)
-                        self.Estados.append(estado_destino)
+                        SELF_Estados.append(estado_destino)
                         #print(self.Estados)
                         
                         fila.append(estado_destino)
@@ -168,50 +162,44 @@ class AF():
                 novo_Transicoes[estado] = novas_transicoes
                 #print(self.Transicoes)
 
-        self.Transicoes = novo_Transicoes
-        for estado in self.Estados:
-            if estado not in self.Transicoes:
-                self.Estados.remove(estado)
+        #self.Transicoes = novo_Transicoes
+        for estado in SELF_Estados:
+            if estado not in novo_Transicoes:
+                SELF_Estados.remove(estado)
 
-        fila = [self.Qo]
-        novos_estados = [self.Qo]
+        fila = [SELF_Qo]
+        novos_estados = [SELF_Qo]
 
 
         while fila:
             estado_atual = fila.pop()
             #print(estado_atual)
-            if estado_atual in self.Transicoes:
-                transicao = self.Transicoes[estado_atual]
+            if estado_atual in novo_Transicoes:
+                transicao = novo_Transicoes[estado_atual]
                 for simbolo in self.Alfabeto:
                     if simbolo in transicao:
                         if transicao[simbolo] not in novos_estados:
                             novos_estados.append(transicao[simbolo])
                             fila.append(transicao[simbolo])
         
-        self.Estados = novos_estados
+        #self.Estados = novos_estados
         
-        for estado in self.Estados:
-            if estado not in self.Transicoes:
-                self.Estados.remove(estado)
+        for estado in novos_estados:
+            if estado not in novo_Transicoes:
+                novos_estados.remove(estado)
 
         novos_finais = []
         for estado_final in self.F:
-            for estado in self.Estados:
+            for estado in SELF_Estados:
                 if estado_final in estado:
                     novos_finais.append(estado)
 
-        self.F = novos_finais
-
-        print(self.Estados)
-        print(self.F)
-        print(self.Transicoes)
-
-                
-        print(self.Estados)
-
-
-
-        
+        #self.F = novos_finais
+        return AF(novos_estados, self.Alfabeto, novo_Transicoes, SELF_Qo, novos_finais)
+        #print(self.Estados)
+        #print(self.F)
+        #print(self.Transicoes)
+  
     def convert_to_GR(self):  #TODO: ajeitar variaveis e comentar
         nao_terminais = [f'N{i}' for i in range(len(self.Estados))]
         #print(nao_terminais)
@@ -338,6 +326,8 @@ class AF():
             for i in deletar:
                 if i[0] in list(self.Transicoes.keys()):
                     del self.Transicoes[i[0]][i[1]]
+            if l:
+                break
             # -=-=-=-=-=-=-=-=-=-=-=- Remove estados Mortos -=-=-=-=-=-=-=-=-=-=-=-=-=-=-
             transicoes = self.Transicoes
             acesso = set(self.F)
@@ -349,8 +339,8 @@ class AF():
         while Qo in self.Estados or Qo in OutroAF.Estados:
             Qo += "'"
         # Salva o equivalente dos estados -=-=-=-=-=-=-=-=-=-=-=-=-
-        TabelaEstados = {i:f"E{h}" for h,i in enumerate(self.Estados)}
-        TabelaEstados2 = {i:f"E{h}" for h,i in zip(range(len(self.Estados), len(self.Estados)+len(OutroAF.Estados)),OutroAF.Estados)}
+        TabelaEstados = {i:f"q{h}" for h,i in enumerate(self.Estados)}
+        TabelaEstados2 = {i:f"q{h}" for h,i in zip(range(len(self.Estados), len(self.Estados)+len(OutroAF.Estados)),OutroAF.Estados)}
         # -=-=-=-=-=-=-=- Traduz as Transições -=-=-=-=-=-=-=-=-=
         novaTransicao = {Qo:{'&':f"{TabelaEstados[self.Qo]},{TabelaEstados2[OutroAF.Qo]}"}}
 
@@ -376,8 +366,73 @@ class AF():
                     list(set(self.Alfabeto+OutroAF.Alfabeto)), novaTransicao, Qo,
                      list(map(lambda x: TabelaEstados[x],self.F))+list(map(lambda x: TabelaEstados2[x],OutroAF.F)))
 
-    def Intersecao_AFs(self):
-        pass
+    def Interseccao_AFs(self, OutroAF): # Não testado, falta alterar
+        A_Transicao, A_Estados, A_Qo, A_F, h = MudaEstados(self.Transicoes, self.Estados, self.Alfabeto, self.Qo, self.F)
+
+        B_Transicao, B_Estados, B_Qo, B_F = MudaEstados(OutroAF.Transicoes, OutroAF.Estados, OutroAF.Alfabeto, OutroAF.Qo, OutroAF.F, h)[:4]
+
+        Novo_alfabeto = list(set(self.Alfabeto) | set(OutroAF.Alfabeto))
+
+        A_Transicao.update(B_Transicao)
+
+        Novo_Qo = f"{A_Qo},{B_Qo}"
+        novo_Estados = [Novo_Qo]
+        tempEstados = [Novo_Qo]
+        NovoF = []
+        if any(ele in A_F for ele in Novo_Qo.split(',')) and any(ele in B_F for ele in Novo_Qo.split(',')):
+            NovoF.append(Novo_Qo)
+        
+        while tempEstados:
+            est = tempEstados.pop(0)
+            for alf in Novo_alfabeto:
+                novEst = ""
+                for i in est.split(','):
+                    if i in A_Transicao.keys() and alf in A_Transicao[i].keys():
+                        novEst += f"{A_Transicao[i][alf]},"
+                if novEst[:-1] != "" and novEst[:-1] not in novo_Estados:
+                    tempEstados.append(novEst[:-1])
+                    novo_Estados.append(novEst[:-1])
+                    if any(ele in A_F for ele in novEst[:-1].split(',')) and any(ele in B_F for ele in novEst[:-1].split(',')):
+                        NovoF.append(novEst[:-1])
+
+        return AF(novo_Estados, Novo_alfabeto, A_Transicao, Novo_Qo, NovoF)
+
+def MudaEstados(transicao, estados, alfabeto, Qo, F, h=0):
+    # -=-=-=-=-=-= Novos Estados -=-=-=-=-=--=
+    tabela = dict()
+    NovoEstados = []
+    for est in estados:
+        estad = ""
+        for i in est.split(','):
+            if i not in tabela.keys():
+                tabela[i] = f"q{h}"
+                h += 1
+            estad += f"{tabela[i]},"
+        NovoEstados.append(estad[:-1])
+    # -=-=-=-=-=- Estado Inicial -=-=-=-=-=-=-
+    NovoQo = ""
+    for i in Qo.split(','):
+        NovoQo += f"{tabela[i]},"
+    NovoQo = NovoQo[:-1]
+    # -=-=-=-=-= Estados Finais -=-=-=-=-=-=-
+    NovoF = []
+    for est in F:
+        final = ""
+        for i in est.split(','):
+            final += f"{tabela[i]},"
+        NovoF.append(final[:-1])
+    # -=-=-=-=- Novas Transições -=-=-=-=-=-=-
+    novoTransicao = dict()
+    for k,v in transicao.items():
+        novoV = dict()
+        for kv, nv in v.items():
+            v2 = ""
+            for i in nv.split(','):
+                v2 += f"{tabela[i]},"
+            novoV[kv] = v2[:-1]
+        novoTransicao[tabela[k]] = novoV
+
+    return (novoTransicao, NovoEstados, NovoQo, NovoF, h)
 
 def VoltaEstados(est): # Para achar estados Mortos
     global acesso, transicoes
