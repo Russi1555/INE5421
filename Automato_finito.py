@@ -60,8 +60,8 @@ class AF():
                     es = f"{'{'+es+'}'}"
                 elif es == "":
                     es = "--"
-                tam = len(est)
-                string += ((5-tam//2)*" ")+est+((5-tam//2)*" ")+"|"
+                tam = len(es)
+                string += ((5-tam//2)*" ")+es+((5-tam//2)*" ")+"|"
             string = string[:-1] + "\n"+TRACO+"\n"
         return string
 
