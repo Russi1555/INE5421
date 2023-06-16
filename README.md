@@ -1,3 +1,4 @@
+
 # INE5421 : Linguagens Formais e Compiladores
 
 ## Manipulação de Linguagens Regulares e Linguagens Livres de Contexto
@@ -8,5 +9,12 @@
  - [x]  União e interseção de AFD (1,0pt)
  - [x]  Conversão de ER para AFD (usando o algoritmo baseado em árvore sintática - Livro Aho - seção 3.9) (1,5pt)
  - [x]  Reconhecimento de sentenças em AF (0,5pt)
- - [ ]  Reconhecimento de sentenças em AP (via implementação de uma tabela Preditivo LL(1)) - Além dos algoritmos relacionados a análise da sentença de entrada, devem ser implementados os algoritmos para cálculo dos conjuntos First e Follow, Fatoração e Eliminação de Recursão à esquerda (2,5pt) 
- - [ ]  Reconhecimento de sentenças em AP (via implementação de um SLR(1) ou LR Canônico) - Além dos algoritmos relacionados aos conjuntos canônicos e Autômato LR, devem ser implementados os algoritmos para cálculo dos conjuntos First e Follow (2,5pt)
+ 
+ ## Implementar o analisador sintático do tipo preditivo LL(1)
+ 
+ - [ ] Leitura e edição de uma Gramática Livre de contexto (considerando terminais como um único símbolo minúsculo e não terminais maiúsculos (1pt) 
+ - [ ] Algoritmo para verificação de não determinismo e fatoração da gramática (1pt) 
+ - [ ] Algoritmo para eliminação de recursão a esquerda (1pt)
+ - [ ] Firsts e Follows (1pt)
+ - [ ] Construção da tabela do preditivo LL(1) e construção do algoritmo que simula a pilha para o reconhecimento de uma sentença de entrada (1pt)
+
