@@ -196,34 +196,45 @@ class AF():
         #print(self.F)
         #print(self.Transicoes)
   
-    def convert_to_GR(self):  #TODO: ajeitar variaveis e comentar
-        nao_terminais = [f'N{i}' for i in range(len(self.Estados))]
-        #print(nao_terminais)
-        simbolo_inicial = nao_terminais[self.Estados.index(self.Qo)]
-        #print(simbolo_inicial)
+    def convert_to_GR(self):  #TEM QUE ESTAR DETERMINIZADO
+        nao_terminais = self.Estados
+        terminais = self.Alfabeto
+        P = {}
+        dict_T = {}
+        count=0
+        for estado in self.Transicoes:
+            novo_nome = str(f"E{count}")
+            dict_T[estado] = novo_nome
+            count+=1
 
-        estados_finais = []
-        for estado_aceitacao in self.F:
-            #regras.append([nao_terminais[self.Estados.index(estado_aceitacao)], '$'])
-            estados_finais.append(estado_aceitacao)
-        
-        regras = []
-        for transicao in sorted(self.Transicoes):
-            inicio = nao_terminais[self.Estados.index(transicao[0])]
-            terminal = transicao[1]
-            if transicao[2] != []:
-                fim = nao_terminais[self.Estados.index(sorted(transicao[2]))]
+        S = dict_T[self.Qo]
 
-            if transicao[2] in estados_finais:
-                regras.append([inicio, terminal])              
-            if fim:
-               # print(f"{inicio} -> {terminal}")
-                regras.append([inicio, terminal, fim])
+        for estado in self.Transicoes:
+            id = dict_T[estado]
+            P[id] = []
+            for T in self.Transicoes[estado]:
+                NT = self.Transicoes[estado][T]
+                if NT in self.F:
+                    P[id].append(T)
+                if NT not in self.Transicoes:
+                    pass
+                else:
+                    NT = dict_T[NT]
+                    producao = str(T.lower() + NT.upper())
+                    P[id].append(producao)
+
         
+
+                
+        GR_resultante = GR(nao_terminais,terminais,P,S)
+        return(GR_resultante)
+                
         
-       # print(regras)
-        GR_resultante = GR(nao_terminais, self.Alfabeto, regras, simbolo_inicial)
-        return GR_resultante
+
+            
+                
+
+        
 
     def minimiza_AFD(self): # Minimiza Automato finito
         self.removeInacessivel_e_Mortos()

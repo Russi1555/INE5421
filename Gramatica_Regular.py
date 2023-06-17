@@ -1,18 +1,26 @@
 class GR():
-    def __init__(self,N,T,R,S):
+    def __init__(self,N,T,P,S):
         self.nao_terminais = N
         self.terminais = T
-        self.regras = R #[nao terminal, terminal, nao_terminal]  nt -> tnt
+        self.regras = P # {Tx : {N : Ty}}
         self.inicial = S
     
     def __repr__(self):
-        string =""
-        for regra in self.regras:
-            if len(regra) == 3:
-                string +=(f" {regra[0]} -> {regra[1]}{regra[2]}\n")
+        string = ""
+        for estado in self.regras:
+            if estado == self.inicial:
+                substring = (f"*{estado} -> | ")
             else:
-                string +=(f" {regra[0]} -> {regra[1]}\n")
+                substring = (f"{estado} -> | ")
+            for producao in self.regras[estado]:                
+                substring += producao
+                substring += " | "
+            string += substring
+            string += "\n"
+        
         return string
+
+
     
     def convert_to_AFND(self):
         from Automato_finito import AF
@@ -20,15 +28,22 @@ class GR():
         estados.append('NEF') #Novo Estado Final
         alfabeto = self.terminais
         Qo = self.inicial
-        transicoes = []
+        transicoes = {}
         estados_aceitacao = ['NEF']
-        for regra in self.regras:
-            if len(regra) == 2:
-                transicao = [regra[0],regra[1],'NEF']
-            else:
-                transicao = [regra[0],regra[1],regra[2]]
-            transicoes.append(transicao)
+        for NT in self.regras:
+            transicoes[NT] = {}
+            for producao in self.regras[NT]:
+                print(producao)
+                if producao == producao.lower(): #verifica se vai para final ex: a == a | aN1 != an1
+                    transicoes[NT][producao] = 'NEF'
+                else:
+                    simbolo = producao[0]
+                    estado = producao.replace(simbolo,'')
+                    transicoes[NT][simbolo] = estado
         
+        print(transicoes)
+        print(estados)
+
         AFND_resultante = AF(estados,alfabeto,transicoes,Qo,estados_aceitacao)
         #print(AFND_resultante)
         return AFND_resultante
