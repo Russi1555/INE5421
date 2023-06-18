@@ -197,13 +197,14 @@ class AF():
         #print(self.Transicoes)
   
     def convert_to_GR(self):  #TEM QUE ESTAR DETERMINIZADO
-        nao_terminais = self.Estados
+        nao_terminais = []#self.Estados
         terminais = self.Alfabeto
         P = {}
         dict_T = {}
         count=0
         for estado in self.Transicoes:
             novo_nome = str(f"E{count}")
+            nao_terminais.append(novo_nome)
             dict_T[estado] = novo_nome
             count+=1
 
@@ -221,21 +222,10 @@ class AF():
                 else:
                     NT = dict_T[NT]
                     producao = str(T.lower() + NT.upper())
-                    P[id].append(producao)
+                    P[id].append(producao)        
 
-        
-
+        return GR(nao_terminais,terminais,P,S)
                 
-        GR_resultante = GR(nao_terminais,terminais,P,S)
-        return(GR_resultante)
-                
-        
-
-            
-                
-
-        
-
     def minimiza_AFD(self): # Minimiza Automato finito
         self.removeInacessivel_e_Mortos()
         # Ajusta todos os estados em Finais e NãoFinais
@@ -372,7 +362,7 @@ class AF():
 
         return AF(NovoAF.Estados, NovoAF.Alfabeto, NovoAF.Transicoes, NovoAF.Qo, Novo_Final)"""
 
-    def Interseccao_AFs(self, OutroAF): # Não testado, falta alterar
+    def Interseccao_AFs(self, OutroAF):
         A_Transicao, A_Estados, A_Qo, A_F, h = MudaEstados(self.Transicoes, self.Estados, self.Alfabeto, self.Qo, self.F)
 
         B_Transicao, B_Estados, B_Qo, B_F = MudaEstados(OutroAF.Transicoes, OutroAF.Estados, OutroAF.Alfabeto, OutroAF.Qo, OutroAF.F, h)[:4]

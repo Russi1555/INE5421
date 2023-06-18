@@ -68,9 +68,10 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             'S',
                             ['C','D'])
 
-print(automato.Uniao_AFs(automato3))
-
-print(automato.Interseccao_AFs(automato3))
+Novo = automato.convert_to_GR()
+print(automato)
+print(Novo.convert_to_AFND())
+print(Novo)
 
 
 
