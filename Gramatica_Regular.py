@@ -75,7 +75,7 @@ class GR():
 
         gramatica_nova = GR(self.nao_terminais.copy(), self.terminais.copy(), {}, self.inicial)
 
-    # Itera sobre tudo e deixa apenas as producoes que os simbolos estão marcados
+        # Itera sobre tudo e deixa apenas as producoes que os simbolos estão marcados
         for cabeca, producao in self.regras.items():
             if cabeca in marcados:
                 novas_producoes = []
@@ -86,5 +86,35 @@ class GR():
                     gramatica_nova.regras[cabeca] = novas_producoes
 
         return gramatica_nova
+    
+
+    def remover_inalcancaveis(self):
+        alcancaveis = set([self.inicial])  # Passo 1: Marcar o NT inicial como alcançavel
+
+        # Passo 2: Marcar simbolos que possam ser alcançados a partir do NT inicial
+        marcados = set()
+        while marcados != alcancaveis:
+            marcados = alcancaveis.copy()
+            for cabeca, producao in self.regras.items():
+                if cabeca in alcancaveis:
+                    for corpo in producao:
+                        for symbol in corpo:
+                            if symbol in self.nao_terminais:
+                                alcancaveis.add(symbol)
+
+        # Passo 3: remover simbolos inalcançaveis da gramática
+        gramatica_nova = GR(set(), self.terminais.copy(), {}, self.inicial)
+        for cabeca, producao in self.regras.items():
+            if cabeca in alcancaveis:
+                producoes_atualizadas = []
+                for corpo in producao:
+                    if all(symbol in alcancaveis or symbol in self.terminais for symbol in corpo):
+                        producoes_atualizadas.append(corpo)
+                if producoes_atualizadas:
+                    gramatica_nova.regras[cabeca] = producoes_atualizadas
+
+        return gramatica_nova
+
+
 
         
