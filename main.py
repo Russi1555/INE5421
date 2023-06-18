@@ -68,10 +68,10 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             'S',
                             ['C','D'])
 
-Novo = automato.convert_to_GR()
-print(automato)
-print(Novo.convert_to_AFND())
-print(Novo)
 
+teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
+
+print(teste_gr)
+print(teste_gr.remover_improdutivos())
 
 
