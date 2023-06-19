@@ -71,7 +71,25 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
 
 teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
 
-print(teste_gr)
-print(teste_gr.remover_improdutivos())
+teste_recursao_direta = GR(['S'],['a','b'],{'S' : ['Sa','b']},'S')
+
+teste_recursao_indireta = GR(['S','A'],['a','b','c','d'],{'S': ["Aa",'b'], 'A': ['Ac','Sd','a']},'S')
+
+teste_recursao_ambas = GR(['S','A'],['a','b','c','d'],{'S':['Aa','Sb'],'A':['Sc','d'],},'S')
+
+print(teste_recursao_direta)
+
+teste_recursao_direta.remover_recursao_direta()
+print(teste_recursao_direta)
+
+print(teste_recursao_indireta)
+print(teste_recursao_indireta.remove_rec())
+
+print(teste_recursao_ambas)
+
+teste_recursao_ambas.remove_rec()
+
+print(teste_recursao_ambas)
+
 
 

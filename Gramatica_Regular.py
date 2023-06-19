@@ -116,5 +116,98 @@ class GR():
         return gramatica_nova
 
 
+                    
+            
+
+        print(self)
+
+    def check_recursao_direita(self):
+        recursao_direta = set()
+        
+        for nt in self.regras: #Passo 1: Identificar as producoes com recursividade direta
+            producoes = self.regras[nt]
+            for producao in producoes:
+                if producao[0] == nt:
+                    recursao_direta.add(nt)
+                    break
+
+        return recursao_direta
+    
+    def remover_recursao_direta(self):
+
+        recursao_direta = self.check_recursao_direita()
+        while recursao_direta != set():
+            #Passo 2: Para cada nt com recursividade direta
+            for nt in recursao_direta:
+                producoes_novas = []
+                producoes_restantes = []
+
+                for producao in self.regras[nt]:
+                    if producao[0] == nt:
+                        nova_producao = producao[1:] +nt+ "'" #troca t e nt' de posicao
+                        producoes_novas.append(nova_producao) #producoes_novas = producoes atualizadas
+                    else:
+                        producoes_restantes.append(producao + nt + "'") #producoes sem recursividade permanecem em nt, producoes novas vão pra nt'
+
+                producao_vazia = '&'
+                producoes_novas.append(producao_vazia) #acrescenta epsilon as nt'
+
+                self.regras[nt] = producoes_restantes
+                novo_nt = nt + "'"
+                self.regras[novo_nt] = producoes_novas 
+
+            recursao_direta = set()
+            #Checar se foi tudo resolvido, vai retornar o conjunto para ser tratado recursivamente por fora
+            for nt in self.regras:
+                producoes = self.regras[nt]
+
+                for producao in producoes:
+
+                    if producao[0] == nt:
+                        recursao_direta.add(nt)
+                        break
+
+            return recursao_direta 
+        
+        #Talvez precise voltar pra fazer o Passo 3 / 5
+
+    def remove_rec(self):
+        if self.check_recursao_direita() != set():
+            self.remover_recursao_direta()
+        
+        print(self)
+        nt = self.nao_terminais
+
+        for i in range(0,len(nt)):
+            Ai = nt[i]
+
+            for j in range(i):
+                Aj = nt[j]
+                novas_regras = self.regras[Ai].copy()
+                for producao in self.regras[Ai]:
+                    if Aj in producao:
+                        for producao_substituta in self.regras[Aj]:
+                            nova_producao = producao.replace(Aj, producao_substituta)
+                            if producao in self.regras[Ai]:
+                                indice = self.regras[Ai].index(producao)
+                                self.regras[Ai][indice] = nova_producao
+                            else:
+                                self.regras[Ai].append(nova_producao)
+
+        if self.check_recursao_direita() != set():
+            self.remover_recursao_direta()
+
+
+
+
+
+        
+        
+        
+
+
+
+
+
 
         
