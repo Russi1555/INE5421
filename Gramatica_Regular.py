@@ -121,7 +121,7 @@ class GR():
 
         print(self)
 
-    def check_recursao_direita(self):
+    def check_recursao_direta(self):
         recursao_direta = set()
         
         for nt in self.regras: #Passo 1: Identificar as producoes com recursividade direta
@@ -135,7 +135,7 @@ class GR():
     
     def remover_recursao_direta(self):
 
-        recursao_direta = self.check_recursao_direita()
+        recursao_direta = self.check_recursao_direta()
         while recursao_direta != set():
             #Passo 2: Para cada nt com recursividade direta
             for nt in recursao_direta:
@@ -171,22 +171,33 @@ class GR():
         
         #Talvez precise voltar pra fazer o Passo 3 / 5
 
-    def remove_rec(self):
-        if self.check_recursao_direita() != set():
-            self.remover_recursao_direta()
+    def remove_recursividades(self):
+        ciclo_no_inicial = False
+        #Verifica há um ciclo na produção do NT inicial
+        for producao in self.regras[self.inicial]:
+            if self.inicial in producao:
+                ciclo_no_inicial = True
+                break
         
-        print(self)
+        #Se há, é necessário fazer uma remoção da recursividade direta ou
+        #sofrer com um loop infinito
+        if ciclo_no_inicial:
+            if self.check_recursao_direta() != set():
+                self.remover_recursao_direta()
+        
         nt = self.nao_terminais
+
+        #IMPLEMENTAÇÃO DO ALGORITMO DOS SLIDES
 
         for i in range(0,len(nt)):
             Ai = nt[i]
-
             for j in range(i):
                 Aj = nt[j]
-                novas_regras = self.regras[Ai].copy()
                 for producao in self.regras[Ai]:
-                    if Aj in producao:
+                    if Aj in producao: #Se Ai => Ajα
                         for producao_substituta in self.regras[Aj]:
+                            #Remova Ai => Aj de P
+                            #Se aj =>  β ∈ P então P′ = P′ ∪ {Ai ::= βα}
                             nova_producao = producao.replace(Aj, producao_substituta)
                             if producao in self.regras[Ai]:
                                 indice = self.regras[Ai].index(producao)
@@ -194,7 +205,8 @@ class GR():
                             else:
                                 self.regras[Ai].append(nova_producao)
 
-        if self.check_recursao_direita() != set():
+        #Elimine as recursões diretas de P' com lado esquerdo Ai
+        if self.check_recursao_direta() != set():
             self.remover_recursao_direta()
 
 

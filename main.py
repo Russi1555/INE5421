@@ -77,19 +77,23 @@ teste_recursao_indireta = GR(['S','A'],['a','b','c','d'],{'S': ["Aa",'b'], 'A': 
 
 teste_recursao_ambas = GR(['S','A'],['a','b','c','d'],{'S':['Aa','Sb'],'A':['Sc','d'],},'S')
 
+print("----------------------------------------------------------------")
 print(teste_recursao_direta)
-
-teste_recursao_direta.remover_recursao_direta()
+teste_recursao_direta.remove_recursividades()
 print(teste_recursao_direta)
+print("----------------------------------------------------------------")
 
+print("----------------------------------------------------------------")
 print(teste_recursao_indireta)
-print(teste_recursao_indireta.remove_rec())
+teste_recursao_indireta.remove_recursividades()
+print(teste_recursao_indireta)
+print("----------------------------------------------------------------")
 
+print("----------------------------------------------------------------")
 print(teste_recursao_ambas)
-
-teste_recursao_ambas.remove_rec()
-
+teste_recursao_ambas.remove_recursividades()
 print(teste_recursao_ambas)
+print("----------------------------------------------------------------")
 
 
 
