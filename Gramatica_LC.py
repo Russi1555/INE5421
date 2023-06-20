@@ -23,9 +23,10 @@ class GLC():
         pass  # TODO
 
     def remove_direct(self):
-        for estado in self.regras:
+        regras = self.regras
+        for estado in list(regras):
             first_prods = {}
-            for prod in self.regras.get(estado):
+            for prod in regras.get(estado):
                 if prod[0] in self.terminais:
                     if prod[0] not in first_prods :
                         first_prods.update({prod[0]: [prod]})
@@ -35,13 +36,14 @@ class GLC():
                 if len(first_prods.get(nt)) > 1:
                     new_prods = nt + f'{estado}`'
                     for i in range(len(first_prods.get(nt))):
-                        self.regras.get(estado).remove(first_prods.get(nt)[i])
+                        regras.get(estado).remove(first_prods.get(nt)[i])
                         first_prods.get(nt)[i] = first_prods.get(nt)[i].replace(nt, '')
 
-                    self.regras.update({estado + '`': []})
+                    regras.update({estado + '`': []})
                     for prod in first_prods.get(nt):
-                        self.regras.get(estado+'`').append(prod)
-                    self.regras.get(estado).append(new_prods)
+                        regras.get(estado+'`').append(prod)
+                    regras.get(estado).append(new_prods)
+        self.regras.update(regras)
 
     def remove_indirect(self):
         pass
