@@ -1,5 +1,6 @@
 from Gramatica_Regular import GR
 from Automato_finito import AF
+from Gramatica_LC import GLC
 from Expressao_Regular import ER
 
 # AF(
@@ -70,6 +71,17 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
 
 
 teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
+
+teste_glc = GLC(['E','T','F'], ['+', '-', '*', '/', '(', ')', 'i'], {'E': ["E+T", "E-T", "T"], 'T': ["T*F", "T/F", "F"], 'F': ["(E)", "i"]}, 'E')
+
+teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
+teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
+
+print("----------------------------------------------------------------")
+print(teste_nao_determinismo_direto)
+teste_nao_determinismo_direto2.remove_direct()
+print(teste_nao_determinismo_direto)
+print("----------------------------------------------------------------")
 
 teste_recursao_direta = GR(['S'],['a','b'],{'S' : ['Sa','b']},'S')
 
