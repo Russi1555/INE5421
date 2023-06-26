@@ -203,7 +203,7 @@ class AF():
         dict_T = {}
         count=0
         for estado in self.Transicoes:
-            novo_nome = str(f"E{count}")
+            novo_nome = str(chr(65+count)) # A,B,C...Z (65-91)
             nao_terminais.append(novo_nome)
             dict_T[estado] = novo_nome
             count+=1

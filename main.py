@@ -70,10 +70,25 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             ['C','D'])
 
 
-teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
+#print(automato.convert_to_GR())
 
-teste_glc = GLC(['E','T','F'], ['+', '-', '*', '/', '(', ')', 'i'], {'E': ["E+T", "E-T", "T"], 'T': ["T*F", "T/F", "F"], 'F': ["(E)", "i"]}, 'E')
+#teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
 
+#teste_glc = GLC(['E','T','F'], ['+', '-', '*', '/', '(', ')', 'i'], {'E': ["E+T", "E-T", "T"], 'T': ["T*F", "T/F", "F"], 'F': ["(E)", "i"]}, 'E')
+
+teste_First = GLC(['S','A','B', 'C'],
+                ['a','b','c','d'],
+                {'S':['ABC'],
+                'A':['aA', '&'],
+                'B':['bB', 'ACd'],
+                'C':['cC','&']},
+                'S')
+
+teste_First.assemble_first()
+for i,v in teste_First.First.items():
+    print(f"{i} -> {v}")
+
+"""
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
 teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
 
@@ -106,6 +121,6 @@ print(teste_recursao_ambas)
 teste_recursao_ambas.remove_recursividades()
 print(teste_recursao_ambas)
 print("----------------------------------------------------------------")
-
+"""
 
 

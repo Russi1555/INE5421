@@ -48,8 +48,39 @@ class GLC():
     def remove_indirect(self):
         pass
 
-    def assemble_first(self):
-        pass  # TODO
+    def assemble_first(self): # Funciona
+        self.First = {T:set() for T in self.nao_terminais}
+        for NT, regra in self.regras.items():
+            if not self.First[NT]:
+                self.First[NT] = self.First[NT] | self.pegaFirst(regra, NT)
+
+    def pegaFirst(self, regra, NT):
+        first = set()
+        for r in regra:
+            for ind, i in enumerate(r):
+                if i in self.terminais+['&']:
+                    first.add(i)
+                    break
+                elif NT == i:
+                    break
+                elif self.First[i]:
+                    passo = self.First[i].copy()
+                    if '&' not in passo:
+                        first = first | passo
+                        break
+                    elif ind+1 < len(r):
+                        passo.remove('&')
+                    first = first | passo
+                else:
+                    passo = self.pegaFirst(self.regras[i], i)
+                    self.First[i] = passo.copy()
+                    if '&' not in passo:
+                        first = first | passo
+                        break
+                    elif ind+1 < len(r):
+                        passo.remove('&')
+                    first = first | passo
+        return first
 
     def assemble_follow(self):
         pass  # TODO

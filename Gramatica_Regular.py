@@ -47,8 +47,6 @@ class GR():
                     transicoes[tabela[NT]][simbolo] = tabela[producao[1:]]
         return AF(sorted(list(estados)),alfabeto,transicoes,Qo,sorted(list(NovoFinal)))
     
-
-
     def remover_improdutivos(self):
         t_marcados = set(self.terminais)  # Passo 1: marcar os terminais
         for producao in self.regras.values(): #Esse for muito provavelmente é desnecessário. Deixar aqui por enqunato
@@ -87,7 +85,6 @@ class GR():
 
         return gramatica_nova
     
-
     def remover_inalcancaveis(self):
         alcancaveis = set([self.inicial])  # Passo 1: Marcar o NT inicial como alcançavel
 
