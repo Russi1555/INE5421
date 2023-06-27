@@ -22,7 +22,7 @@ class GLC():
     def remove_non_determinism(self):
         pass  # TODO
 
-    def remove_direct(self):
+    def factorization(self):
         regras = self.regras
         for estado in list(regras):
             first_prods = {}

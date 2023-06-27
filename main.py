@@ -92,11 +92,11 @@ for i,v in teste_First.First.items():
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
 teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
 
-print("----------------teste_nao_determinismo_direto--------------------")
+print("----------------teste_fatoracao--------------------")
 print(teste_nao_determinismo_direto2)
-teste_nao_determinismo_direto2.remove_direct()
+teste_nao_determinismo_direto2.factorization()
 print(teste_nao_determinismo_direto2)
-print("----------------teste_nao_determinismo_direto-------------------")
+print("----------------teste_fatoracao-------------------")
 
 teste_recursao_direta = GR(['S'],['a','b'],{'S' : ['Sa','b']},'S')
 
