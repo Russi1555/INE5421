@@ -87,6 +87,10 @@ teste_First = GLC(['S','A','B', 'C'],
 teste_First.assemble_first()
 for i,v in teste_First.First.items():
     print(f"{i} -> {v}")
+print()
+teste_First.assemble_follow()
+for i,v in teste_First.Follow.items():
+    print(f"{i} -> {v}")
 
 """
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
