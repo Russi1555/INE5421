@@ -4,7 +4,7 @@ class GLC():
         self.terminais = T
         self.regras = P  # {Tx : ['T'], Ty: ['TN', 'T'], Tz: ['NTN', 'N', 'T']}
         self.inicial = S
-        self.First, self.Follow = None, None
+        self.First, self.Follow, self.M = None, None, None
 
     def __repr__(self):
         string = ""
@@ -179,3 +179,54 @@ class GLC():
                 print(col, end='')
                 print(tam*' ', end='|')
             print()
+
+    def Testa_Palavra(self, w, passo_A_passo=False):
+        if self.M is None:
+            self.Cria_Tabela_LL1()
+        pilha = ['$', self.inicial]
+
+        if passo_A_passo: # APENAS PRINTS -=-=-=-=-
+            print(f"Palavra:\n-=-=-=- {w} -=-=-=-\n")
+        # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        for ind, simbolo in enumerate(w):
+            if not pilha or pilha[-1] == '$':
+                return False
+
+            while simbolo != pilha[-1] and pilha[-1] != '$':
+                if pilha[-1] in self.terminais: # Simbolo diferente do esperado
+                    return False
+
+                # Pega o corpo de produção a partir da tabela
+                producao = [caractere for caractere in self.M[pilha[-1]][simbolo]]
+                
+                if passo_A_passo: # APENAS PRINTS -=-=-=-=-
+                    tam = len(f"Pilha: {pilha}")
+                    tam2 = len(f"  ({simbolo}) |   {pilha[-1]} -> {self.M[pilha[-1]][simbolo]}")
+                    print(f"Pilha: {pilha}", (60-tam)*" ",f"  ({simbolo}) |   {pilha[-1]} -> {self.M[pilha[-1]][simbolo]}", end='') 
+                    print((25-tam2)*" ","|   ", w[ind:])
+                # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                
+                if not producao: # Não tem caminho na tabela
+                    return False
+                
+                pilha.pop(-1) # Remove a cabeça da produçao
+
+                if producao[0] != '&': # Caso não seja Epsilon, colocar o corpo da produção invertido na pilha
+                    pilha += reversed(producao)
+            
+            if passo_A_passo: # APENAS PRINTS -=-=-=-=-
+                tam = len(f"Pilha: {pilha}")
+                tam2 = len(f"  ({simbolo}) |   {simbolo} -> &")
+                print(f"Pilha: {pilha}", (60-tam)*" ",f"  ({simbolo}) |   {simbolo} -> &", end='')
+                print((25-tam2)*" ","|   ", w[ind+1:])
+            # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+            pilha.pop(-1) # Quando topo da pilha == simbolo
+
+        if passo_A_passo: # APENAS PRINTS -=-=-=-=-
+            tam = len(f"Pilha: {pilha}")
+            print(f"Pilha: {pilha}", (60-tam)*" ",f" (--) |")
+        # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+        return True if pilha and pilha[-1] == '$' else False

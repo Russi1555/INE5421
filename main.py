@@ -102,6 +102,8 @@ teste_Tabela_LL = GLC(['P','K','V','F','C'],
 print(teste_Tabela_LL)
 teste_Tabela_LL.Cria_Tabela_LL1()
 teste_Tabela_LL.MostraTabelaLL1()
+print()
+print(teste_Tabela_LL.Testa_Palavra("cvfg;be;be", True)) # True para descrição do processo, False para a resposta
 """
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
 teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')

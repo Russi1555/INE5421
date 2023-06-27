@@ -16,5 +16,5 @@
  - [ ] Algoritmo para verificação de não determinismo e fatoração da gramática (1pt) 
  - [x] Algoritmo para eliminação de recursão a esquerda (1pt)
  - [x] Firsts e Follows (1pt)
- - [ ] Construção da tabela do preditivo LL(1) e construção do algoritmo que simula a pilha para o reconhecimento de uma sentença de entrada (1pt)
+ - [x] Construção da tabela do preditivo LL(1) e construção do algoritmo que simula a pilha para o reconhecimento de uma sentença de entrada (1pt)
 
