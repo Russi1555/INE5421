@@ -47,7 +47,8 @@ class GLC():
 
     def remove_indirect(self):
         pass
-
+    
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=- FIRST
     def assemble_first(self): # Funciona
         self.First = {T:set() for T in self.nao_terminais}
         for NT, regra in self.regras.items():
@@ -81,6 +82,41 @@ class GLC():
                         passo.remove('&')
                     first = first | passo
         return first
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+    
+    def assemble_follow(self): # Tem que ter feito o First primeiro
+        self.Follow = {X:set() for X in self.nao_terminais}
+        self.Follow[self.inicial].add('$')
+        follow = dict()
+        while follow != self.Follow:
+            follow = self.Follow.copy()
+            for X in self.nao_terminais:
+                self.Follow[X] = self.pegaFollow(X)
+            
+    def pegaFollow(self, X):
+        conjunto = self.Follow[X].copy()
+        for Y in self.nao_terminais:
+            for prod in self.regras[Y]:
+                if X in prod:
+                    ind = prod.index(X)
+                    while ind < len(prod):
+                        if ind >= len(prod)-1:
+                            conjunto = conjunto | self.Follow[Y].copy()
+                            break
+                        else:
+                            ind += 1
+                            if prod[ind] in self.terminais:
+                                conjunto.add(prod[ind])
+                                break
+                            else:
+                                if prod[ind] == X:
+                                    continue
+                                passo = self.First[prod[ind]].copy()
+                                if '&' not in passo:
+                                    conjunto = conjunto | passo
+                                    break
+                                passo.remove('&')
+                                conjunto = conjunto | passo
+        return conjunto
+            
 
-    def assemble_follow(self):
-        pass  # TODO
