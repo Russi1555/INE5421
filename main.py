@@ -76,22 +76,32 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
 
 #teste_glc = GLC(['E','T','F'], ['+', '-', '*', '/', '(', ')', 'i'], {'E': ["E+T", "E-T", "T"], 'T': ["T*F", "T/F", "F"], 'F': ["(E)", "i"]}, 'E')
 
-teste_First = GLC(['S','A','B', 'C'],
+"""teste_First = GLC(['S','A','B', 'C'],
                 ['a','b','c','d'],
                 {'S':['ABC'],
                 'A':['aA', '&'],
                 'B':['bB', 'ACd'],
                 'C':['cC','&']},
                 'S')
-
 teste_First.assemble_first()
 for i,v in teste_First.First.items():
     print(f"{i} -> {v}")
 print()
 teste_First.assemble_follow()
 for i,v in teste_First.Follow.items():
-    print(f"{i} -> {v}")
-
+    print(f"{i} -> {v}")"""
+                
+teste_Tabela_LL = GLC(['P','K','V','F','C'],
+                        ['c','v','f',';','b','e','g'],
+                        {'P':['KVC'],
+                         'K':['cK', '&'],
+                         'V':['vV', 'F'],
+                         'F':['fP;F', '&'],
+                         'C':['bVCe', 'g;C', '&']},
+                         'P')
+print(teste_Tabela_LL)
+teste_Tabela_LL.Cria_Tabela_LL1()
+teste_Tabela_LL.MostraTabelaLL1()
 """
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
 teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
