@@ -21,8 +21,21 @@ class GLC():
             string += "\n"
         return string
 
-    def remove_non_determinism(self):
-        pass  # TODO
+    def non_determinism_detection(self):
+        regras = self.regras
+        for estado in list(regras):
+            first_prods = {}
+            for prod in regras.get(estado):
+                if prod[0] in self.terminais:
+                    if prod[0] not in first_prods:
+                        first_prods.update({prod[0]: [prod]})
+                    else:
+                        first_prods.get(prod[0]).append(prod)
+            for nt in first_prods:
+                if len(first_prods.get(nt)) > 1:
+                    self.non_determinism_alert(estado, first_prods.get(nt))
+    def non_determinism_alert(self, estado, prods):
+        print(f'nao determinismo detectado no estado: {estado}, producoes nao deterministicas: {estado} -> {prods}\n')
 
     def factorization(self):
         regras = self.regras
@@ -34,16 +47,27 @@ class GLC():
                         first_prods.update({prod[0]: [prod]})
                     else:
                         first_prods.get(prod[0]).append(prod)
+            additional_states = 0
             for nt in first_prods:
                 if len(first_prods.get(nt)) > 1:
-                    new_prods = nt + f'{estado}`'
+                    new_state = f'{estado}`'
+                    self.non_determinism_alert(estado, first_prods.get(nt))
+                    if f'{estado}`' not in self.regras:
+                        new_prods = nt + new_state
+                        additional_states += 1
+                    else:
+                        state = f'{estado}`'
+                        for i in range(additional_states):
+                            state = state + '`'
+                        new_state = state
+                        new_prods = nt + state
                     for i in range(len(first_prods.get(nt))):
                         regras.get(estado).remove(first_prods.get(nt)[i])
                         first_prods.get(nt)[i] = first_prods.get(nt)[i].replace(nt, '')
 
-                    regras.update({estado + '`': []})
+                    regras.update({new_state: []})
                     for prod in first_prods.get(nt):
-                        regras.get(estado+'`').append(prod)
+                        regras.get(new_state).append(prod)
                     regras.get(estado).append(new_prods)
         self.regras.update(regras)
 
