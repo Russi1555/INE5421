@@ -14,7 +14,7 @@ def Menu():
     print(f"\n-=-=- {len(LISTA_OBJETOS)} Objetos carregados -=-=- Selecionado: {SELECIONADO if SELECIONADO is None else SELECIONADO+1} -=-=-\n")
     
     if SELECIONADO is not None:
-        print("\n",LISTA_OBJETOS[SELECIONADO], "\n")
+        print(LISTA_OBJETOS[SELECIONADO], "\n")
 
     print("1- Seleciona um Objeto")
     print("2- Importa um Objeto")
@@ -30,7 +30,7 @@ def Menu():
         if tipo.isnumeric():
             tipo = int(tipo)
     
-    if tipo != 6:
+    if tipo != 7:
         os.system('cls')
         [SelecionaObjeto, 
             ImportaObjeto,
@@ -102,60 +102,15 @@ def TestaPalavra():
     global LISTA_OBJETOS, SELECIONADO
     if SELECIONADO is None or LISTA_OBJETOS[SELECIONADO].TIPO not in ["GLC", "AF"]:
         return
-    
+    print(LISTA_OBJETOS[SELECIONADO],"\n")
+    palavra = input("Digite a palavra: ")
+    resultado = LISTA_OBJETOS[SELECIONADO].Testa_Palavra(palavra, True)
+    if resultado:
+        print(f"A palavra '{palavra}' pertence a Linguagem")
+    else:
+        print(f"A palavra '{palavra}' não pertence a Linguagem")
+    input('\n\nAperte ENTER para continuar')
+
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 while Menu(): # Deixa o menu em loop
     pass
-
-"""
-automatoAFND = AF(['p','q','r','s'],
-                  ['0','1'],
-                  {'p':{'0':'p', '1':'p', '&':'q'},
-                   'q':{'0':'r', '1':'r'},
-                   'r':{'0':'s'},
-                   's':{'0':'s', '1':'s'}},
-                   'p',
-                   ['s'])
-        
-automato = AF(['q0', 'q1', 'q2', 'q3'],
-              ['a', 'b'],
-              {'q0':{'a':'q1'},
-               'q1':{'b':'q2','a':'q3'},
-               'q2':{'b':'q0'}},
-              'q0',
-              ['q3'])
-
-
-automato2 = AF(['1','2','3'],
-               ['a','b'],
-               {'1':{'b':'2','&':'3'},
-                '2':{'a':'1','b':'2'},
-                '3':{'a':'2,3','b':'3'}},
-               '1',
-               ['2'])
-
-
-automato3 = AF(['q0', 'q1', 'q2', 'q3'],
-              ['a', 'b'],
-              {'q0':{'a':'q1'},
-               'q1':{'b':'q2','a':'q3'},
-               'q2':{'b':'q3'},
-               'q3':{'b':'q0', 'a':'q0'}},
-              'q0',
-              ['q3'])
-
-automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
-                            ['a', 'b'],
-                            {'S':{'a':'A','b':'E'},
-                            'A':{'a':'B', 'b':'F'},
-                            'B':{'a':'A', 'b':'C'},
-                            'C':{'a':'G', 'b':'D'},
-                            'D':{'a':'C', 'b':'G'},
-                            'E':{'b':'F'},
-                            'F':{'a':'G'},
-                            'G':{'a':'F'},
-                            'H':{'b':'D'}},
-                            'S',
-                            ['C','D'])
-
-"""

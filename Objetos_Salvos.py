@@ -15,24 +15,14 @@ def Salva_AF(path, AF):
             "F":AF.F
         }))
 
-def Salva_GR(path, GR):
+def Salva_G(path, G):
     with open(path, 'w') as arquivo:
         arquivo.writelines(json.dumps({
-            "TIPO":"GR",
-            "N":GR.nao_terminais,
-            "T":GR.terminais,
-            "P":GR.regras,
-            "S":GR.inicial
-        }))
-
-def Salva_GLC(path, GLC):
-    with open(path, 'w') as arquivo:
-        arquivo.writelines(json.dumps({
-            "TIPO":"GLC",
-            "N":GR.nao_terminais,
-            "T":GR.terminais,
-            "P":GR.regras,
-            "S":GR.inicial
+            "TIPO":G.TIPO,
+            "N":G.nao_terminais,
+            "T":G.terminais,
+            "P":G.regras,
+            "S":G.inicial
         }))
 
 def Salva_ER(path, ER):
@@ -46,9 +36,10 @@ def Salva_Json(Obj):
     if not os.path.exists(PATH):
         os.mkdir(PATH)
     nome = Obj.TIPO
+    tam = len(nome)
     i = 1
     while os.path.exists(PATH+f"/{nome}.json"):
-        nome = nome[0:2]+f"({i})"
+        nome = nome[0:tam]+f"({i})"
         i += 1
 
     print(f"Nome do arquivo é '{nome}'")
@@ -59,7 +50,7 @@ def Salva_Json(Obj):
     path_ = PATH+f"/{nome}.json"
     if path_ == '':
         return
-    {"AF":Salva_AF, "GR":Salva_GR, "GLC":Salva_GLC, "ER":Salva_ER}[Obj.TIPO](path_, Obj)
+    {"AF":Salva_AF, "GR":Salva_G, "GLC":Salva_G, "ER":Salva_ER}[Obj.TIPO](path_, Obj)
     
 def Pega_Json():
     path = RecebePath()
