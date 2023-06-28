@@ -4,8 +4,8 @@ import os
 PATH = os.getcwd()+"/Objetos"
 
 
-def Salva_AF(AF):
-    with open(path_, 'w') as arquivo:
+def Salva_AF(path, AF):
+    with open(path, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"AF",
             "Estados":AF.Estados,
@@ -15,8 +15,8 @@ def Salva_AF(AF):
             "F":AF.F
         }))
 
-def Salva_GR(GR):
-    with open(path_, 'w') as arquivo:
+def Salva_GR(path, GR):
+    with open(path, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"GR",
             "N":GR.nao_terminais,
@@ -25,10 +25,10 @@ def Salva_GR(GR):
             "S":GR.inicial
         }))
 
-def Salva_GLC(GLC):
-    with open(path_, 'w') as arquivo:
+def Salva_GLC(path, GLC):
+    with open(path, 'w') as arquivo:
         arquivo.writelines(json.dumps({
-            "TIPO":"GCL",
+            "TIPO":"GLC",
             "N":GR.nao_terminais,
             "T":GR.terminais,
             "P":GR.regras,
@@ -36,7 +36,7 @@ def Salva_GLC(GLC):
         }))
 
 def Salva_ER(path, ER):
-    with open(path_, 'w') as arquivo:
+    with open(path, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"ER",
             "expressao":ER.expressao}))
@@ -47,16 +47,16 @@ def Salva_Json(Obj):
         os.mkdir(PATH)
     nome = Obj.TIPO
     i = 1
-    while os.path.exists(PATH+f"{nome}.json"):
+    while os.path.exists(PATH+f"/{nome}.json"):
         nome = nome[0:2]+f"({i})"
         i += 1
 
-    if input(f"Nome do arquivo é '{nome}, deseja alterar? (s/n): '") == 's':
-        nome_ = input('Digite o nome (não digite nada para cancelar)')
-        if nome_ != '':
-            nome = nome_
+    print(f"Nome do arquivo é '{nome}'")
+    nome_ = input('Digite o novo nome (não digite nada para usar o padrão): ')
+    if nome_ != '':
+        nome = nome_
 
-    path_ = PATH+f"{nome}.json"
+    path_ = PATH+f"/{nome}.json"
     if path_ == '':
         return
     {"AF":Salva_AF, "GR":Salva_GR, "GLC":Salva_GLC, "ER":Salva_ER}[Obj.TIPO](path_, Obj)
