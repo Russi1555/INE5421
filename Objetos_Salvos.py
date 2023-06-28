@@ -1,22 +1,10 @@
 import json
-from tkinter import filedialog
 import os
 
 PATH = os.getcwd()+"/Objetos"
 
 
 def Salva_AF(AF):
-    global PATH
-    if not os.path.exists(PATH):
-        os.mkdir(PATH)
-    nome = "AF"
-    i = 1
-    while os.path.exists(PATH+f"{nome}.json"):
-        nome = nome[0:2]+f"({i})"
-        i += 1
-    path_ = filedialog.asksaveasfilename(initialdir=PATH, defaultextension='.json', initialfile=f"{nome}.json")
-    if path_ == '':
-        return
     with open(path_, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"AF",
@@ -28,17 +16,6 @@ def Salva_AF(AF):
         }))
 
 def Salva_GR(GR):
-    global PATH
-    if not os.path.exists(PATH):
-        os.mkdir(PATH)
-    nome = "GR"
-    i = 1
-    while os.path.exists(PATH+f"{nome}.json"):
-        nome = nome[0:2]+f"({i})"
-        i += 1
-    path_ = filedialog.asksaveasfilename(initialdir=PATH, defaultextension='.json', initialfile=f"{nome}.json")
-    if path_ == '':
-        return
     with open(path_, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"GR",
@@ -49,17 +26,6 @@ def Salva_GR(GR):
         }))
 
 def Salva_GLC(GLC):
-    global PATH
-    if not os.path.exists(PATH):
-        os.mkdir(PATH)
-    nome = "GLC"
-    i = 1
-    while os.path.exists(PATH+f"{nome}.json"):
-        nome = nome[0:3]+f"({i})"
-        i += 1
-    path_ = filedialog.asksaveasfilename(initialdir=PATH, defaultextension='.json', initialfile=f"{nome}.json")
-    if path_ == '':
-        return
     with open(path_, 'w') as arquivo:
         arquivo.writelines(json.dumps({
             "TIPO":"GCL",
@@ -69,36 +35,61 @@ def Salva_GLC(GLC):
             "S":GR.inicial
         }))
 
-def Salva_ER(ER):
+def Salva_ER(path, ER):
+    with open(path_, 'w') as arquivo:
+        arquivo.writelines(json.dumps({
+            "TIPO":"ER",
+            "expressao":ER.expressao}))
+
+def Salva_Json(Obj):
     global PATH
     if not os.path.exists(PATH):
         os.mkdir(PATH)
-    nome = "ER"
+    nome = Obj.TIPO
     i = 1
     while os.path.exists(PATH+f"{nome}.json"):
         nome = nome[0:2]+f"({i})"
         i += 1
-    path_ = filedialog.asksaveasfilename(initialdir=PATH, defaultextension='.json', initialfile=f"{nome}.json")
+
+    if input(f"Nome do arquivo é '{nome}, deseja alterar? (s/n): '") == 's':
+        nome_ = input('Digite o nome (não digite nada para cancelar)')
+        if nome_ != '':
+            nome = nome_
+
+    path_ = PATH+f"{nome}.json"
     if path_ == '':
         return
-    with open(path_, 'w') as arquivo:
-        arquivo.writelines(json.dumps({
-            "TIPO":"ER",
-            "expressao":ER.expressao,
-            "alfabeto":ER.alfabeto}))
-
+    {"AF":Salva_AF, "GR":Salva_GR, "GLC":Salva_GLC, "ER":Salva_ER}[Obj.TIPO](path_, Obj)
+    
 def Pega_Json():
-    path = RecebeArquivo()
-    if path == '': 
+    path = RecebePath()
+    if path == None: 
         return None
     with open(path, 'r') as arquivo:
         return json.loads(arquivo.readline())
     
-def RecebeArquivo():
+def RecebePath():
     global PATH
-    if not os.path.exists(PATH):
+    if not os.path.exists(PATH): # Pasta Objetos não existe
         os.mkdir(PATH)
-    return filedialog.askopenfilename(initialdir=PATH, filetypes=[("Arquivos JSON", "*.json")])
+        return None
+
+    opcoes = []
+    for arquivos in os.walk(PATH):
+        for ind, arq in enumerate(arquivos[2]):
+            print(f"{ind+1}- {arq}")
+            opcoes.append(arq)
+    
+    if not opcoes: # Nenhum objeto na pasta
+        return None
+
+    val = " "
+    while type(val) != type(1) or val < 1 or val > len(opcoes):
+        val = input("Digite o valor do objeto: ")
+        if val.isnumeric():
+            val = int(val)
+
+    return PATH+"/"+opcoes[val-1]
 
 
 

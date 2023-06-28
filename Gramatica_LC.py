@@ -5,6 +5,7 @@ class GLC():
         self.regras = P  # {Tx : ['T'], Ty: ['TN', 'T'], Tz: ['NTN', 'N', 'T']}
         self.inicial = S
         self.First, self.Follow, self.M = None, None, None
+        self.TIPO = "GLC"
 
     def __repr__(self):
         string = ""
@@ -50,7 +51,7 @@ class GLC():
         pass
     
     # -=-=-=-=-=-=-=-=-=-=-=-=-=- FIRST
-    def assemble_first(self): # Funciona
+    def assemble_first(self): 
         self.First = {T:set() for T in self.nao_terminais}
         for NT, regra in self.regras.items():
             if not self.First[NT]:

@@ -8,6 +8,7 @@ class AF():
         self.Transicoes = Transicao #{estado:{simbolo:estado}}
         self.Qo = Qo
         self.F = F
+        self.TIPO = "AF"
         # Verifica se tem transição por epsilon, para colocar mais uma coluna na tabela
         self.epsilon = False
         for dic in Transicao.values():

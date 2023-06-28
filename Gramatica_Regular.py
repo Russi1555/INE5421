@@ -4,6 +4,7 @@ class GR():
         self.terminais = T
         self.regras = P # {Tx : ['T'], Ty: ['TN', 'T']}
         self.inicial = S
+        self.TIPO = "GR"
     
     def __repr__(self):
         string = ""

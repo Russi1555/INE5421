@@ -2,24 +2,101 @@ from Gramatica_Regular import GR
 from Automato_finito import AF
 from Gramatica_LC import GLC
 from Expressao_Regular import ER
-from Objetos_Salvos import Salva_AF, Pega_Json
+from Objetos_Salvos import Pega_Json, Salva_Json
+import os
 
-# AF(
-#  [estados],
-#  [alfabeto],
-#  {estados: {simbolo:estadosDestino},
-#            {simbolo:estadosDestino},
-#            {simbolo:estadosDestino}
-#            },
-#  Qo,
-#  [Estados Finais]
-# )
-# 0 1
-#→ p {p, q} {p}
-#q {r} {r}
-#r {s} ∅
-#∗s {s} {s}
+LISTA_OBJETOS = []
+SELECIONADO = None
 
+
+def Menu():
+    os.system('cls')
+    print(f"\n-=-=- {len(LISTA_OBJETOS)} Objetos carregados -=-=- Selecionado: {SELECIONADO if SELECIONADO is None else SELECIONADO+1} -=-=-\n")
+    
+    if SELECIONADO is not None:
+        print("\n",LISTA_OBJETOS[SELECIONADO], "\n")
+
+    print("1- Seleciona um Objeto\n2- Importa um Objeto\n3- Deleta Objeto\n4- Edita Objeto\n5- Salvar Objeto")
+    print("6- Sair\n")
+    
+    tipo = " "
+    while type(tipo) != type(1) or tipo < 1 or tipo > 6:
+        tipo = input("Digite um valor entre 1 e 6: ")
+        if tipo.isnumeric():
+            tipo = int(tipo)
+    
+    if tipo != 6:
+        os.system('cls')
+        [SelecionaObjeto, 
+            ImportaObjeto,
+            DeletarObjeto,
+            EditaObjeto,
+            SalvaObjeto][tipo-1]()
+        return True
+    return False
+
+# -=-=-=-=-=-=-=- OPÇÕES DO MENU -=-=-=-=-=-=-=-=-=-=-=        
+def SelecionaObjeto():
+    global LISTA_OBJETOS, SELECIONADO
+    if not LISTA_OBJETOS:
+        return
+    for ind, i in enumerate(LISTA_OBJETOS):
+        print(f"-=-=-=- {ind+1} -=-=-=-")
+        print(i)
+        print()
+
+    tipo = " "
+    while type(tipo) != type(1) or tipo < 1 or tipo > len(LISTA_OBJETOS):
+        tipo = input("Digite o número do objeto: ")
+        if tipo.isnumeric():
+            tipo = int(tipo)
+    
+    SELECIONADO = tipo-1
+
+def ImportaObjeto():
+    global LISTA_OBJETOS, SELECIONADO
+    dicio = Pega_Json()
+    if dicio is None:
+        return
+    elif dicio["TIPO"] == "AF":
+        LISTA_OBJETOS.append(AF(dicio["Estados"],
+                        dicio["Alfabeto"],
+                        dicio["Transicao"],
+                        dicio["Qo"],
+                        dicio["F"]))
+    elif dicio["TIPO"] == "GR":
+        LISTA_OBJETOS.append(GR(
+            dicio["N"], dicio["T"], dicio["P"], dicio["S"]
+        ))
+    
+    elif dicio["TIPO"] == "GLC":
+        LISTA_OBJETOS.append(GR(
+            dicio["N"], dicio["T"], dicio["P"], dicio["S"]
+        ))
+    else:
+        LISTA_OBJETOS.append(ER(dicio["expressao"]))
+    SELECIONADO = len(LISTA_OBJETOS)-1
+
+def DeletarObjeto():
+    global SELECIONADO
+    if SELECIONADO is None:
+        return
+
+    LISTA_OBJETOS.pop(SELECIONADO)
+    SELECIONADO = None
+
+def EditaObjeto():
+    pass
+
+def SalvaObjeto():
+    global LISTA_OBJETOS, SELECIONADO
+    Salva_Json(LISTA_OBJETOS[SELECIONADO])
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+while Menu(): # Deixa o menu em loop
+    pass
+
+"""
 automatoAFND = AF(['p','q','r','s'],
                   ['0','1'],
                   {'p':{'0':'p', '1':'p', '&':'q'},
@@ -70,79 +147,4 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             'S',
                             ['C','D'])
 
-Salva_AF(automato3) # Salva o automato
-print(Pega_Json()) # Pega o dicionário do arquivo JSON, dicionario["TIPO"] retorna AF,GR,GLC,ER
-            # dicionario["estados"] retorna a lista de estados do AF
-
-#print(automato.convert_to_GR())
-
-#teste_gr = GR(['S','A','B','C'],['a','b','c'],{'S': ["ABB","CAC"],'A':['a'],'B':['Bc','ABB'],'C':["bB",'a']},'S')
-
-#teste_glc = GLC(['E','T','F'], ['+', '-', '*', '/', '(', ')', 'i'], {'E': ["E+T", "E-T", "T"], 'T': ["T*F", "T/F", "F"], 'F': ["(E)", "i"]}, 'E')
-
-"""teste_First = GLC(['S','A','B', 'C'],
-                ['a','b','c','d'],
-                {'S':['ABC'],
-                'A':['aA', '&'],
-                'B':['bB', 'ACd'],
-                'C':['cC','&']},
-                'S')
-teste_First.assemble_first()
-for i,v in teste_First.First.items():
-    print(f"{i} -> {v}")
-print()
-teste_First.assemble_follow()
-for i,v in teste_First.Follow.items():
-    print(f"{i} -> {v}")"""
-
-"""teste_Tabela_LL = GLC(['P','K','V','F','C'],
-                        ['c','v','f',';','b','e','g'],
-                        {'P':['KVC'],
-                         'K':['cK', '&'],
-                         'V':['vV', 'F'],
-                         'F':['fP;F', '&'],
-                         'C':['bVCe', 'g;C', '&']},
-                         'P')
-print(teste_Tabela_LL)
-teste_Tabela_LL.Cria_Tabela_LL1()
-teste_Tabela_LL.MostraTabelaLL1()
-print()
-print(teste_Tabela_LL.Testa_Palavra("cvfg;be;be", True)) # True para descrição do processo, False para a resposta
 """
-
-"""
-teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
-teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
-
-print("----------------teste_fatoracao--------------------")
-print(teste_nao_determinismo_direto2)
-teste_nao_determinismo_direto2.factorization()
-print(teste_nao_determinismo_direto2)
-print("----------------teste_fatoracao-------------------")
-
-teste_recursao_direta = GR(['S'],['a','b'],{'S' : ['Sa','b']},'S')
-
-teste_recursao_indireta = GR(['S','A'],['a','b','c','d'],{'S': ["Aa",'b'], 'A': ['Ac','Sd','a']},'S')
-
-teste_recursao_ambas = GR(['S','A'],['a','b','c','d'],{'S':['Aa','Sb'],'A':['Sc','d'],},'S')
-
-print("----------------------------------------------------------------")
-print(teste_recursao_direta)
-teste_recursao_direta.remove_recursividades()
-print(teste_recursao_direta)
-print("----------------------------------------------------------------")
-
-print("----------------------------------------------------------------")
-print(teste_recursao_indireta)
-teste_recursao_indireta.remove_recursividades()
-print(teste_recursao_indireta)
-print("----------------------------------------------------------------")
-
-print("----------------------------------------------------------------")
-print(teste_recursao_ambas)
-teste_recursao_ambas.remove_recursividades()
-print(teste_recursao_ambas)
-print("----------------------------------------------------------------")
-"""
-
-
