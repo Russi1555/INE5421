@@ -16,12 +16,17 @@ def Menu():
     if SELECIONADO is not None:
         print("\n",LISTA_OBJETOS[SELECIONADO], "\n")
 
-    print("1- Seleciona um Objeto\n2- Importa um Objeto\n3- Deleta Objeto\n4- Edita Objeto\n5- Salvar Objeto")
-    print("6- Sair\n")
+    print("1- Seleciona um Objeto")
+    print("2- Importa um Objeto")
+    print("3- Deleta Objeto")
+    print("4- Edita Objeto")
+    print("5- Salvar Objeto")
+    print("6- Testar palavra")
+    print("7- Sair\n")
     
     tipo = " "
-    while type(tipo) != type(1) or tipo < 1 or tipo > 6:
-        tipo = input("Digite um valor entre 1 e 6: ")
+    while type(tipo) != type(1) or tipo < 1 or tipo > 7:
+        tipo = input("Digite um valor entre 1 e 7: ")
         if tipo.isnumeric():
             tipo = int(tipo)
     
@@ -31,7 +36,8 @@ def Menu():
             ImportaObjeto,
             DeletarObjeto,
             EditaObjeto,
-            SalvaObjeto][tipo-1]()
+            SalvaObjeto,
+            TestaPalavra][tipo-1]()
         return True
     return False
 
@@ -92,6 +98,11 @@ def SalvaObjeto():
     global LISTA_OBJETOS, SELECIONADO
     Salva_Json(LISTA_OBJETOS[SELECIONADO])
 
+def TestaPalavra():
+    global LISTA_OBJETOS, SELECIONADO
+    if SELECIONADO is None or LISTA_OBJETOS[SELECIONADO].TIPO not in ["GLC", "AF"]:
+        return
+    
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 while Menu(): # Deixa o menu em loop
     pass
