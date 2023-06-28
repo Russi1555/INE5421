@@ -2,6 +2,7 @@ from Gramatica_Regular import GR
 from Automato_finito import AF
 from Gramatica_LC import GLC
 from Expressao_Regular import ER
+from Objetos_Salvos import Salva_AF, Pega_Json
 
 # AF(
 #  [estados],
@@ -69,6 +70,9 @@ automatoParaMinimizar = AF(['S','A','B','C','D','E','F','G', 'H'],
                             'S',
                             ['C','D'])
 
+Salva_AF(automato3) # Salva o automato
+print(Pega_Json()) # Pega o dicionário do arquivo JSON, dicionario["TIPO"] retorna AF,GR,GLC,ER
+            # dicionario["estados"] retorna a lista de estados do AF
 
 #print(automato.convert_to_GR())
 
@@ -90,8 +94,8 @@ print()
 teste_First.assemble_follow()
 for i,v in teste_First.Follow.items():
     print(f"{i} -> {v}")"""
-                
-teste_Tabela_LL = GLC(['P','K','V','F','C'],
+
+"""teste_Tabela_LL = GLC(['P','K','V','F','C'],
                         ['c','v','f',';','b','e','g'],
                         {'P':['KVC'],
                          'K':['cK', '&'],
@@ -104,6 +108,8 @@ teste_Tabela_LL.Cria_Tabela_LL1()
 teste_Tabela_LL.MostraTabelaLL1()
 print()
 print(teste_Tabela_LL.Testa_Palavra("cvfg;be;be", True)) # True para descrição do processo, False para a resposta
+"""
+
 """
 teste_nao_determinismo_direto = GLC(['S', 'A', 'B'], ['a', 'b'], {'S': ["aSB", "aSA"], 'A': ['a'], 'B': ['b']}, 'S')
 teste_nao_determinismo_direto2 = GLC(['S', 'A', 'B', 'C', 'D'], ['a', 'c', 'd', 'e', 'f'], {'S': ["aDC", "cCC", "aBC", "dDC"], 'A': ["aD", "cC"], 'B': ["aB", "dD"], 'C': ["eC", "eA"], 'D': ["fD", "CB"]}, 'S')
