@@ -46,7 +46,7 @@ def Cria_GLC():
                   ['c','v','f','p','b','e','o'], # Terminais
                   {'P':['KVC'],
                   'K':['cK', '&'],
-                  'V':['vV', '&'],
+                  'V':['vV', 'F'],
                   'F':['fPpF', '&'],
                   'C':['bVCe', 'opC', '&']}, # Regras
                   "P")) # Inicial

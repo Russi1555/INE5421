@@ -27,21 +27,16 @@ class GLC():
         print("3- Detecta não determinismo") # Retorna None
         print("4- Gera Firsts") # Retorna None
         print("5- Gera Follows") # Retorna None
-        print("6- Mostra First e Follow") # Retorna None
-        print("7- Cria Tabela LL(1)") # Retorna None
-        print("8- Mostra Tabela LL(1)") # Retorna None
-        print("9- Cancelar")
+        print("6- Cria Tabela LL(1)") # Retorna None
+        print("7- Cancelar")
 
-        return (9, [self.factorization,
+        return (7, [self.factorization,
                     self.remove_recursividades,
                     self.non_determinism_detection,
                     self.assemble_first,
                     self.assemble_follow,
-                    self.MostraFirst_Follow,
-                    self.Cria_Tabela_LL1,
-                    self.MostraTabelaLL1])
+                    self.Cria_Tabela_LL1])
             
-
     def remover_improdutivos(self):
         t_marcados = set(self.terminais)  # Passo 1: marcar os terminais
         for producao in self.regras.values(): #Esse for muito provavelmente é desnecessário. Deixar aqui por enqunato
