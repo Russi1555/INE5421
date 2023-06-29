@@ -25,3 +25,7 @@
 
  - Execute main.py para visualizar, testar se uma palavra pertence a linguagem ou editar os objetos 
  - Execute CriaObjetos.py se não houver objetos para ser importados
+ - Caso use fatoração ou remoção de recursão a esquerda, não utilize a gramatica resultante para outras ações
+ - Quando usar UNIÃO ou INTERSECÇÃO que estão na seleção '5- Metodos do Objeto' do menu, selecione apenas AFs para combinar
+ - Para editar os objetos, no menu selecione '5- Metodos do Objeto' tendo um objeto selecinado
+ - Para visualizar First, Follow e tabela LL(1), entre no '5- Metodos do Objeto' do menu
