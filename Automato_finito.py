@@ -208,9 +208,19 @@ class AF():
             for estado in SELF_Estados:
                 if estado_final in estado:
                     novos_finais.append(estado)
-
+        
+        # -=-=-=-=- Retira as vírgulas das transições -=-=-=-=-=-
+        
         #self.F = novos_finais
-        return AF(novos_estados, self.Alfabeto, novo_Transicoes, SELF_Qo, novos_finais)
+        novo_trans = dict() 
+        for k,v in novo_Transicoes.items():
+            noV = dict()
+            for k2,v2 in v.items():
+                noV[k2] = v2.replace(",", "")
+            novo_trans[k.replace(",","")] = noV
+
+
+        return AF(list(map(lambda x: x.replace(",",""),novos_estados)), self.Alfabeto, novo_trans, SELF_Qo.replace(",",""), list(map(lambda x: x.replace(",",""),novos_finais)))
         #print(self.Estados)
         #print(self.F)
         #print(self.Transicoes)
