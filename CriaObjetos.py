@@ -42,10 +42,14 @@ def Cria_GR():
     """
 
 def Cria_GLC():
-    Salva_Json(GLC([], # Não Terminais
-                  [], # Terminais
-                  {}, # Regras
-                  "")) # Inicial
+    Salva_Json(GLC(['P','K','V','F','C'], # Não Terminais
+                  ['c','v','f','p','b','e','o'], # Terminais
+                  {'P':['KVC'],
+                  'K':['cK', '&'],
+                  'V':['vV', '&'],
+                  'F':['fPpF', '&'],
+                  'C':['bVCe', 'opC', '&']}, # Regras
+                  "P")) # Inicial
     
     """
     -=-=-=-=-=- EXEMPLO -=-=-=-=-=-=-
@@ -73,8 +77,10 @@ def Cria_ER():
 
 #Cria_AF()
 #Cria_GR()
-#Cria_GLC()
+Cria_GLC()
 #Cria_ER()
+
+
 """ 
 Salva_Json(GLC(['E','T','F'],                          # Não Terminais
                 ['+', '-', '*', '/', '(', ')', 'i'],    # Terminais

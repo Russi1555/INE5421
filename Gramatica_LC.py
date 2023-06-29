@@ -329,17 +329,18 @@ class GLC():
 
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     def MostraFirst_Follow(self):
-        print("  X  |        FIRST(X)        |        FOLLOW(X)")
+        print("  X  |             FIRST(X)              |        FOLLOW(X)")
         for E in self.nao_terminais:
             print(f"  {E}  |", end="")
             if self.First is None:
-                print("{None}", 16*" ", "|{None}")
+                print("{None}", 27*" ", "|{None}")
                 continue
             conjunto = self.First[E].copy()
+            tam = 33-len(str(conjunto))
             if self.Follow is None:
-                print(f"{conjunto}", 23-len(conjunto)*" ", "|{None}")
+                print(f"{conjunto}", tam*" ", "|{None}")
                 continue
-            print(f"{conjunto}", 23-len(conjunto)*" ", f"|{self.Follow[E]}")
+            print(f"{str(conjunto)}", tam*" ", f"|{self.Follow[E]}")
         return None
 
  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-= TABElA LL(1)

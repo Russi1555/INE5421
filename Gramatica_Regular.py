@@ -53,18 +53,3 @@ class GR():
                     estados.add(tabela[producao[1:]])
                     transicoes[tabela[NT]][simbolo] = tabela[producao[1:]]
         return AF(sorted(list(estados)),alfabeto,transicoes,Qo,sorted(list(NovoFinal)))
-    
-
-
-
-
-        
-        
-        
-
-
-
-
-
-
-        
