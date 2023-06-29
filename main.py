@@ -150,7 +150,13 @@ def Acao_Objeto():
     if tipo == fim:  # Não faz nada
         return
 
-    obj = lista_Metodos[tipo - 1]()  # Chama o método escolhido
+    if LISTA_OBJETOS[SELECIONADO].TIPO == "AF" and tipo in [4, 5]:
+        os.system('cls')
+        print("Selcione o outro Automato")
+        SelecionaObjeto()
+        obj = lista_Metodos[tipo-1](LISTA_OBJETOS[SELECIONADO]) # Chama o método escolhido
+    else:
+        obj = lista_Metodos[tipo-1]() # Chama o método escolhido
 
     if not obj is None:  # Caso o método retorne um novo obj
         LISTA_OBJETOS.append(obj)
@@ -173,6 +179,11 @@ def TestaPalavra():
         input("\nAperte ENTER para voltar ao MENU")
         return
     print(LISTA_OBJETOS[SELECIONADO],"\n")
+    if LISTA_OBJETOS[SELECIONADO].TIPO == 'GLC':
+        print("\n")
+        LISTA_OBJETOS[SELECIONADO].MostraFirst_Follow()
+        print()
+        LISTA_OBJETOS[SELECIONADO].MostraTabelaLL1()
     palavra = input("Digite a palavra: ")
     resultado = LISTA_OBJETOS[SELECIONADO].Testa_Palavra(palavra, True) # True para mostrar a pilha passo a passo
     if resultado:
