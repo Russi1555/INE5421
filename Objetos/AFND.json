@@ -1,1 +1,1 @@
-{"TIPO": "AF", "Estados": ["q0", "q1", "q2", "q3"], "Alfabeto": ["a", "b"], "Transicao": {"q0": {"a": "q1,q2"}, "q1": {"b": "q2", "a": "q3"}, "q2": {"b": "q0"}}, "Qo": "q0", "F": ["q3"]}
+{"TIPO": "AF", "Estados": ["q0", "q1", "q2", "q3"], "Alfabeto": ["a", "b"], "Transicao": {"q0": {"a": "q1", "b": "q2"}, "q1": {"b": "q2", "a": "q3"}, "q2": {"b": "q0", "&": "q1"}}, "Qo": "q0", "F": ["q3"]}

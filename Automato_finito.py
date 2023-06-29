@@ -172,8 +172,11 @@ class AF():
                         #print("FILA: " + str(fila))
 
                 novo_Transicoes[estado] = novas_transicoes
+                #print(novo_Transicoes)
                 #print(self.Transicoes)
 
+        #print(SELF_Estados)
+        #print(novo_Transicoes)
         #self.Transicoes = novo_Transicoes
         for estado in SELF_Estados:
             if estado not in novo_Transicoes:
@@ -326,12 +329,15 @@ class AF():
             return True
 
         elif est in list(self.Transicoes.keys()):
-            if '&' in list(self.Transicoes[est].keys()) or (palavra and index < len(palavra) and palavra[index] in list(self.Transicoes[est].keys())):
+            if '&' in self.Transicoes[est] or (palavra and index < len(palavra) and palavra[index] in list(self.Transicoes[est].keys())):
                 for g,h in self.Transicoes[est].items():
                     if g == '&' or (palavra and index < len(palavra) and palavra[index] == g):
                         for i in self.Transicoes[est][g].split(','):
-                            if self.TesteSimbolo(index+1 if h != '&' else index, i, palavra):
+                            if self.TesteSimbolo(index+1 if g != '&' else index, i, palavra):
                                 return True
+                            elif g == '&' and self.TesteSimbolo(index, i, palavra):
+                                return True
+
         elif any(ele in list(self.Transicoes.keys()) for ele in est.split(',')):
             for es in est.split(','):
                 if es in self.Transicoes.keys() and ('&' in list(self.Transicoes[es].keys()) or (palavra and index < len(palavra) and palavra[index] in list(self.Transicoes[es].keys()))):
