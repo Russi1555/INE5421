@@ -9,7 +9,7 @@ class GLC():
         self.TIPO = "GLC"
 
     def __repr__(self):
-        string = ""
+        string = f"Não Terminais: {self.nao_terminais}\nTerminais: {self.terminais}\n"
         for estado in self.regras:
             if estado == self.inicial:
                 substring = (f"*{estado} -> ")
@@ -153,7 +153,12 @@ class GLC():
         #Talvez precise voltar pra fazer o Passo 3 / 5
 
     def remove_recursividades(self):
-        novoGLC = GLC(self.nao_terminais.copy(), self.terminais.copy(), self.regras.copy(), self.inicial)
+        backupGLC = {
+        'nao_terminais': copy.deepcopy(self.nao_terminais),
+        'terminais': copy.deepcopy(self.terminais),
+        'regras': copy.deepcopy(self.regras),
+        'inicial': copy.deepcopy(self.inicial)
+        }
         ciclo_no_inicial = False
         #Verifica há um ciclo na produção do NT inicial
         for producao in self.regras[self.inicial]:
@@ -190,7 +195,8 @@ class GLC():
         #Elimine as recursões diretas de P' com lado esquerdo Ai
         if self.check_recursao_esquerda() != set():
             self.remover_recursao_esquerda()
-        return novoGLC
+        novoGLC = GLC(backupGLC.get('nao_terminais'), backupGLC.get('terminais'), backupGLC.get('regras'),backupGLC.get('inicial'))
+        return novoGLC # Retorna o GLC antes da fatoração
         
     def non_determinism_detection(self):
         regras = self.regras

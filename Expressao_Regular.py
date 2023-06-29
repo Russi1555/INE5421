@@ -17,7 +17,7 @@ class Node:
 class ER:
     def __init__(self, expressao):
         self.expressao = expressao
-        self.alfabeto = set(filter(lambda x: x not in ['.', '(', ')', '|', '*', '&'], self.expressao))
+        self.alfabeto = list(set(filter(lambda x: x not in ['.', '(', ')', '|', '*', '&'], self.expressao)))
         self.TIPO = "ER"
     
     def __repr__(self):

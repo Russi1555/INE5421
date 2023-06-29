@@ -5,12 +5,12 @@ from Expressao_Regular import ER
 from Objetos_Salvos import Pega_Json, Salva_Json, Pega_Json_Tudo
 import os
 
+
 LISTA_OBJETOS = []
 SELECIONADO = None
 
 
 def Menu():
-    os.system('cls')
     print(f"\n-=-=- {len(LISTA_OBJETOS)} Objetos carregados -=-=- Selecionado: {SELECIONADO if SELECIONADO is None else SELECIONADO+1} -=-=-\n")
     
     if SELECIONADO is not None:
@@ -76,11 +76,12 @@ def SelecionaObjeto():
         print("Não tem nenhum objeto que possa ser selecionado")
         input("\nAperte ENTER para voltar ao MENU")
         return
+    print(5*"\n")
     for ind, i in enumerate(LISTA_OBJETOS):
         print(f"-=-=-=- {ind+1} -=-=-=-")
         print(i)
         print()
-
+    #print("LISTA_OBJETOS: ",LISTA_OBJETOS)
     tipo = " "
     while type(tipo) != type(1) or tipo < 1 or tipo > len(LISTA_OBJETOS):
         tipo = input("Digite o número do objeto: ")
@@ -194,4 +195,5 @@ def TestaPalavra():
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 while Menu(): # Deixa o menu em loop
-    pass
+    os.system('cls')
+    

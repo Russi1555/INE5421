@@ -7,7 +7,7 @@ class GR():
         self.TIPO = "GR"
     
     def __repr__(self):
-        string = ""
+        string = f"Não Terminais: {self.nao_terminais}\nTerminais: {self.terminais}\n"
         for estado in self.regras:
             if estado == self.inicial:
                 substring = (f"*{estado} -> ")

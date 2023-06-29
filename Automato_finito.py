@@ -1,4 +1,5 @@
 from Gramatica_Regular import GR
+import copy
 
 
 class AF():
@@ -243,7 +244,14 @@ class AF():
                 
     def minimiza_AFD(self): # Minimiza Automato finito
         # Retorna o AF de antes da minimização
-        novoAF = AF(self.Estados.copy(), self.Alfabeto.copy(), self.Transicoes.copy(), self.Qo, self.F.copy())
+        backupAF = {
+        'Estados': copy.deepcopy(self.Estados),
+        'Alfabeto': copy.deepcopy(self.Alfabeto),
+        'Transicoes': copy.deepcopy(self.Transicoes),
+        'inicial': copy.deepcopy(self.Qo),
+        'finais': copy.deepcopy(self.F)
+        }
+        #novoAF = AF(self.Estados.copy(), self.Alfabeto.copy(), self.Transicoes.copy(), self.Qo, self.F.copy())
 
         self.removeInacessivel_e_Mortos()
         # Ajusta todos os estados em Finais e NãoFinais
@@ -281,15 +289,15 @@ class AF():
             Conjuntos, NovoConjunto = NovoConjunto.copy(), []
         #print("Novo> ",NovoConjunto)
         # -=-=-=-=-=-=- Reajusta o Automato =-=-=-=-=-=-=-=-=-=-=-=-=
-        self.Estados = [f"E{n}" for n in range(len(Conjuntos))]
+        self.Estados = [f"q{n}" for n in range(len(Conjuntos))]
         # -=-=-=- Novos estados Finais e inicial -=-=-=-
         novoFim = []
         for ind,conj in enumerate(Conjuntos): 
             if self.Qo in conj:
-                self.Qo = f"E{ind}"
+                self.Qo = f"q{ind}"
             for f in self.F:
                 if f in conj:
-                    novoFim.append(f"E{ind}")
+                    novoFim.append(f"q{ind}")
                     break
         self.F = novoFim
 
@@ -300,13 +308,15 @@ class AF():
             #print(dest)
             for a,i in zip(self.Alfabeto, dest):
                 if Conjuntos[n][0] in list(self.Transicoes.keys()) and a in list(self.Transicoes[Conjuntos[n][0]].keys()):
-                    if f"E{n}" not in list(novaTrans.keys()):
-                        novaTrans[f"E{n}"] = {}
-                    novaTrans[f"E{n}"][a] = f"E{i}"
+                    if f"q{n}" not in list(novaTrans.keys()):
+                        novaTrans[f"q{n}"] = {}
+                    novaTrans[f"q{n}"][a] = f"q{i}"
         self.Transicoes = novaTrans
+        
+        novoAF = AF(backupAF.get('Estados'), backupAF.get('Alfabeto'), backupAF.get('Transicoes'),backupAF.get('inicial'),backupAF.get('finais'))
+        print("Novo AF adicionado")
+        return novoAF # Retorna o AF antes da Minimização
 
-        return novoAF
-    
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     def Testa_Palavra(self, palavra, _):
         return self.TesteSimbolo(0, self.Qo, palavra)
@@ -334,14 +344,16 @@ class AF():
         transicoes = self.Transicoes
         acesso = set([self.Qo])
         PassaEstados(self.Qo) # Inacessiveis
-
+        # -=-=-=-=-=-=-=-=-
         for l in range(2):        
             estFora = set(self.Estados) - acesso
             deletar = []
             for i in estFora:
                 if i in list(self.Transicoes.keys()):
                     del self.Transicoes[i]
-                    self.Estados.remove(i)
+                self.Estados.remove(i)
+                if i in self.F:
+                    self.F.remove(i)
                 for k,v in self.Transicoes.items():
                     for k2,v2 in v.items():
                         if v2 == i:
