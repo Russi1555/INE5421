@@ -2,7 +2,7 @@ from Gramatica_Regular import GR
 from Automato_finito import AF
 from Gramatica_LC import GLC
 from Expressao_Regular import ER
-from Objetos_Salvos import Pega_Json, Salva_Json
+from Objetos_Salvos import Pega_Json, Salva_Json, Pega_Json_Tudo
 import os
 
 LISTA_OBJETOS = []
@@ -16,23 +16,25 @@ def Menu():
     if SELECIONADO is not None:
         print(LISTA_OBJETOS[SELECIONADO], "\n")
 
-    print("1- Seleciona um Objeto")
-    print("2- Importa um Objeto")
-    print("3- Deleta Objeto")
-    print("4- Metodos do Objeto")
-    print("5- Salvar Objeto")
-    print("6- Testar palavra")
-    print("7- Sair\n")
+    print("1- Importa todos os objetos")
+    print("2- Seleciona um Objeto")
+    print("3- Importa um Objeto")
+    print("4- Deleta Objeto")
+    print("5- Metodos do Objeto")
+    print("6- Salvar Objeto")
+    print("7- Testar palavra")
+    print("8- Sair\n")
     
     tipo = " "
-    while type(tipo) != type(1) or tipo < 1 or tipo > 7:
-        tipo = input("Digite um valor entre 1 e 7: ")
+    while type(tipo) != type(1) or tipo < 1 or tipo > 8:
+        tipo = input("Digite um valor entre 1 e 8: ")
         if tipo.isnumeric():
             tipo = int(tipo)
     
-    if tipo != 7:
+    if tipo != 8:
         os.system('cls')
-        [SelecionaObjeto, 
+        [ImportaTudo,
+            SelecionaObjeto, 
             ImportaObjeto,
             DeletarObjeto,
             Acao_Objeto,
@@ -41,7 +43,33 @@ def Menu():
         return True
     return False
 
-# -=-=-=-=-=-=-=- OPÇÕES DO MENU -=-=-=-=-=-=-=-=-=-=-=        
+# -=-=-=-=-=-=-=- OPÇÕES DO MENU -=-=-=-=-=-=-=-=-=-=-=
+def ImportaTudo():
+    global LISTA_OBJETOS
+    dicionarios = Pega_Json_Tudo()
+    if dicionarios is None or not dicionarios:
+        input("\nAperte ENTER para voltar ao MENU")
+        return
+
+    for dicio in dicionarios:
+        if dicio["TIPO"] == "AF":
+            LISTA_OBJETOS.append(AF(dicio["Estados"],
+                            dicio["Alfabeto"],
+                            dicio["Transicao"],
+                            dicio["Qo"],
+                            dicio["F"]))
+        elif dicio["TIPO"] == "GR":
+            LISTA_OBJETOS.append(GR(
+                dicio["N"], dicio["T"], dicio["P"], dicio["S"]
+            ))
+        
+        elif dicio["TIPO"] == "GLC":
+            LISTA_OBJETOS.append(GLC(
+                dicio["N"], dicio["T"], dicio["P"], dicio["S"]
+            ))
+        else:
+            LISTA_OBJETOS.append(ER(dicio["expressao"]))
+
 def SelecionaObjeto():
     global LISTA_OBJETOS, SELECIONADO
     if not LISTA_OBJETOS:
@@ -79,7 +107,7 @@ def ImportaObjeto():
         ))
     
     elif dicio["TIPO"] == "GLC":
-        LISTA_OBJETOS.append(GR(
+        LISTA_OBJETOS.append(GLC(
             dicio["N"], dicio["T"], dicio["P"], dicio["S"]
         ))
     else:
@@ -97,6 +125,8 @@ def DeletarObjeto():
     SELECIONADO = None
 
 def Acao_Objeto():
+    global SELECIONADO
+
     if SELECIONADO is None:
         print("Nenhum objeto foi selecionado")
         input("\nAperte ENTER para voltar ao MENU")
@@ -105,6 +135,7 @@ def Acao_Objeto():
     if LISTA_OBJETOS[SELECIONADO].TIPO == 'GLC':
         print("\n")
         LISTA_OBJETOS[SELECIONADO].MostraFirst_Follow()
+        print()
         LISTA_OBJETOS[SELECIONADO].MostraTabelaLL1()
 
     print("\n\nO que você quer realizar?")

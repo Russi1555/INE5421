@@ -84,5 +84,27 @@ def RecebePath():
 
     return PATH+"/"+opcoes[val-1]
 
+def Pega_Json_Tudo():
+    global PATH
+    if not os.path.exists(PATH): # Pasta Objetos não existe
+        print("Pasta dos objetos não existe, criando...")
+        os.mkdir(PATH)
+        return None
+
+    opcoes = []
+    for arquivos in os.walk(PATH):
+        for ind, arq in enumerate(arquivos[2]):
+            print(f"{ind+1}- {arq}")
+            opcoes.append(arq)
+    
+    if not opcoes: # Nenhum objeto na pasta
+        print("Não tem nenhum objeto que possa ser importado")
+        return None
+    dicionarios = []
+    for path in opcoes:
+        with open(PATH+"/"+path, 'r') as arquivo:
+            dicionarios.append(json.loads(arquivo.readline()))
+
+    return dicionarios
 
 

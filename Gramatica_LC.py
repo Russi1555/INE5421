@@ -333,13 +333,13 @@ class GLC():
         for E in self.nao_terminais:
             print(f"  {E}  |", end="")
             if self.First is None:
-                print("{None}", 18*" ", "|{None}")
+                print("{None}", 16*" ", "|{None}")
                 continue
             conjunto = self.First[E].copy()
             if self.Follow is None:
-                print(f"{conjunto}", 24-len(conjunto)*" ", "|{None}")
+                print(f"{conjunto}", 23-len(conjunto)*" ", "|{None}")
                 continue
-            print(f"{conjunto}", 24-len(conjunto)*" ", f"|{self.Follow[E]}")
+            print(f"{conjunto}", 23-len(conjunto)*" ", f"|{self.Follow[E]}")
         return None
 
  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-= TABElA LL(1)

@@ -75,14 +75,14 @@ def Cria_ER():
 #Cria_GR()
 #Cria_GLC()
 #Cria_ER()
-
+""" 
 Salva_Json(GLC(['E','T','F'],                          # Não Terminais
                 ['+', '-', '*', '/', '(', ')', 'i'],    # Terminais
                 {'E': ["E+T", "E-T", "T"],              # REGRAS \ 
                 'T': ["T*F", "T/F", "F"],              # REGRAS  > CADA Elemento da lista é uma produção
                 'F': ["(E)", "i"]},                    # REGRAS / 
                 'E'))
-"""        
+       
 Salva_Json(AF(['q0', 'q1', 'q2', 'q3'],
               ['a', 'b'],
               {'q0':{'a':'q1'},

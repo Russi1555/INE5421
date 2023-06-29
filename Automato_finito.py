@@ -308,7 +308,7 @@ class AF():
         return novoAF
     
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    def TestaPalavra(self, palavra, _):
+    def Testa_Palavra(self, palavra, _):
         return self.TesteSimbolo(0, self.Qo, palavra)
     
     def TesteSimbolo(self, index, est, palavra):
