@@ -21,3 +21,7 @@
  - [x] Firsts e Follows (1pt)
  - [x] Construção da tabela do preditivo LL(1) e construção do algoritmo que simula a pilha para o reconhecimento de uma sentença de entrada (1pt)
 
+ ## Como usar
+
+ - Execute main.py para visualizar, testar se uma palavra pertence a linguagem ou editar os objetos 
+ - Execute CriaObjetos.py se não houver objetos para ser importados
