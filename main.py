@@ -19,7 +19,7 @@ def Menu():
     print("1- Seleciona um Objeto")
     print("2- Importa um Objeto")
     print("3- Deleta Objeto")
-    print("4- Edita Objeto")
+    print("4- Metodos do Objeto")
     print("5- Salvar Objeto")
     print("6- Testar palavra")
     print("7- Sair\n")
@@ -35,7 +35,7 @@ def Menu():
         [SelecionaObjeto, 
             ImportaObjeto,
             DeletarObjeto,
-            EditaObjeto,
+            Acao_Objeto,
             SalvaObjeto,
             TestaPalavra][tipo-1]()
         return True
@@ -45,6 +45,8 @@ def Menu():
 def SelecionaObjeto():
     global LISTA_OBJETOS, SELECIONADO
     if not LISTA_OBJETOS:
+        print("Não tem nenhum objeto que possa ser selecionado")
+        input("\nAperte ENTER para voltar ao MENU")
         return
     for ind, i in enumerate(LISTA_OBJETOS):
         print(f"-=-=-=- {ind+1} -=-=-=-")
@@ -63,6 +65,7 @@ def ImportaObjeto():
     global LISTA_OBJETOS, SELECIONADO
     dicio = Pega_Json()
     if dicio is None:
+        input("\nAperte ENTER para voltar ao MENU")
         return
     elif dicio["TIPO"] == "AF":
         LISTA_OBJETOS.append(AF(dicio["Estados"],
@@ -86,25 +89,61 @@ def ImportaObjeto():
 def DeletarObjeto():
     global SELECIONADO
     if SELECIONADO is None:
+        print("Nenhum objeto foi selecionado")
+        input("\nAperte ENTER para voltar ao MENU")
         return
 
     LISTA_OBJETOS.pop(SELECIONADO)
     SELECIONADO = None
 
-def EditaObjeto():
-    pass
+def Acao_Objeto():
+    if SELECIONADO is None:
+        print("Nenhum objeto foi selecionado")
+        input("\nAperte ENTER para voltar ao MENU")
+        return
+    print(LISTA_OBJETOS[SELECIONADO])
+    if LISTA_OBJETOS[SELECIONADO].TIPO == 'GLC':
+        print("\n")
+        LISTA_OBJETOS[SELECIONADO].MostraFirst_Follow()
+        LISTA_OBJETOS[SELECIONADO].MostraTabelaLL1()
 
+    print("\n\nO que você quer realizar?")
+    fim, lista_Metodos = LISTA_OBJETOS[SELECIONADO].ApresentarOpcoes()
+
+    tipo = " "
+    while type(tipo) != type(1) or tipo < 1 or tipo > fim:
+        tipo = input("Digite o número da ação: ")
+        if tipo.isnumeric():
+            tipo = int(tipo)
+
+    if tipo == fim: # Não faz nada
+        return
+
+    obj = lista_Metodos[tipo-1]() # Chama o método escolhido
+
+    if not obj is None: # Caso o método retorne um novo obj
+        LISTA_OBJETOS.append(obj)
+        SELECIONADO = len(LISTA_OBJETOS)-1
+    else: # Caso o método retorn None
+        input('\n\nAperte ENTER para continuar')
+    
 def SalvaObjeto():
     global LISTA_OBJETOS, SELECIONADO
+    if SELECIONADO is None:
+        print("Nenhum objeto foi selecionado")
+        input("\nAperte ENTER para voltar ao MENU")
+        return
     Salva_Json(LISTA_OBJETOS[SELECIONADO])
 
 def TestaPalavra():
     global LISTA_OBJETOS, SELECIONADO
     if SELECIONADO is None or LISTA_OBJETOS[SELECIONADO].TIPO not in ["GLC", "AF"]:
+        print("Nenhum objeto válido foi selecionado")
+        input("\nAperte ENTER para voltar ao MENU")
         return
     print(LISTA_OBJETOS[SELECIONADO],"\n")
     palavra = input("Digite a palavra: ")
-    resultado = LISTA_OBJETOS[SELECIONADO].Testa_Palavra(palavra, True)
+    resultado = LISTA_OBJETOS[SELECIONADO].Testa_Palavra(palavra, True) # True para mostrar a pilha passo a passo
     if resultado:
         print(f"A palavra '{palavra}' pertence a Linguagem")
     else:

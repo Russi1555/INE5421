@@ -22,6 +22,12 @@ class ER:
     
     def __repr__(self):
         return self.expressao
+    
+    def ApresentarOpcoes(self):
+        print("1- Converter ER para AFD") # Retorna AFD
+        print("2- Cancelar")
+
+        return (2, [self.ER_para_AFD])
 
     def ER_para_AFD(self):
         global simbolos, h, p

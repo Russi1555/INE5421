@@ -66,6 +66,20 @@ class AF():
             string = string[:-1] + "\n"+TRACO+"\n"
         return string
 
+    def ApresentarOpcoes(self):
+        print("1- Converter AFND para AFD") # Retorna AF
+        print("2- Converter AFD para GR") # Retorna GR
+        print("3- Minimizar AFD") # Retorna AF
+        print("4- União de AFs") # Retorna AF
+        print("5- Intersecção de AFs") # Retorna AF
+        print("6- Cancelar")
+
+        return (6, [self.convert_to_AFD,
+                    self.convert_to_GR,
+                    self.minimiza_AFD,
+                    self.Uniao_AFs,
+                    self.Interseccao_AFs])
+
     def epsilon_fechamento(self):
         fechamento = []
         SELF_Transicoes = self.Transicoes.copy()
@@ -228,6 +242,9 @@ class AF():
         return GR(nao_terminais,terminais,P,S)
                 
     def minimiza_AFD(self): # Minimiza Automato finito
+        # Retorna o AF de antes da minimização
+        novoAF = AF(self.Estados.copy(), self.Alfabeto.copy(), self.Transicoes.copy(), self.Qo, self.F.copy())
+
         self.removeInacessivel_e_Mortos()
         # Ajusta todos os estados em Finais e NãoFinais
         Conjuntos = [list(set(self.Estados) - set(self.F)), self.F]
@@ -287,8 +304,11 @@ class AF():
                         novaTrans[f"E{n}"] = {}
                     novaTrans[f"E{n}"][a] = f"E{i}"
         self.Transicoes = novaTrans
+
+        return novoAF
+    
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    def TestaPalavra(self, palavra):
+    def TestaPalavra(self, palavra, _):
         return self.TesteSimbolo(0, self.Qo, palavra)
     
     def TesteSimbolo(self, index, est, palavra):

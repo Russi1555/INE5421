@@ -62,6 +62,7 @@ def Pega_Json():
 def RecebePath():
     global PATH
     if not os.path.exists(PATH): # Pasta Objetos não existe
+        print("Pasta dos objetos não existe, criando...")
         os.mkdir(PATH)
         return None
 
@@ -72,6 +73,7 @@ def RecebePath():
             opcoes.append(arq)
     
     if not opcoes: # Nenhum objeto na pasta
+        print("Não tem nenhum objeto que possa ser importado")
         return None
 
     val = " "
