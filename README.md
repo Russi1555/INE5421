@@ -1,5 +1,8 @@
-
+# UFSC
 # INE5421 : Linguagens Formais e Compiladores
+# Data: 28/06/23
+# Grupo: Enzo Gomes Sônego (17202002),Eduardo Peres Luckner Goulart (19104096), Gustavo Russi (20100526) 	
+
 
 ## Manipulação de Linguagens Regulares e Linguagens Livres de Contexto
 
