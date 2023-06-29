@@ -147,15 +147,15 @@ def Acao_Objeto():
         if tipo.isnumeric():
             tipo = int(tipo)
 
-    if tipo == fim: # Não faz nada
+    if tipo == fim:  # Não faz nada
         return
 
-    obj = lista_Metodos[tipo-1]() # Chama o método escolhido
+    obj = lista_Metodos[tipo - 1]()  # Chama o método escolhido
 
-    if not obj is None: # Caso o método retorne um novo obj
+    if not obj is None:  # Caso o método retorne um novo obj
         LISTA_OBJETOS.append(obj)
-        SELECIONADO = len(LISTA_OBJETOS)-1
-    else: # Caso o método retorn None
+        SELECIONADO = len(LISTA_OBJETOS) - 1
+    else:  # Caso o método retorn None
         input('\n\nAperte ENTER para continuar')
     
 def SalvaObjeto():
