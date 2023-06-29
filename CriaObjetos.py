@@ -6,14 +6,14 @@ from Expressao_Regular import ER
 
 
 def Cria_AF():
-    Salva_Json(AF(['q0', 'q1', 'q2', 'q3'],     # ESTADOS
-                  ['a', 'b'],                   # ALFABETO
-                  {'q0':{'a':'q1','b':'q2'},          # Transições
-                   'q1':{'b':'q2','a':'q3'},    # Transições
-                   'q2':{'b':'q0', '&':'q1'}},            # Transições
-                   'q0',                        # Estado inicial (So)
-                   ['q3']),                     # Estados Finais
-                   "AFND")  # Nome do Arquivo
+    Salva_Json(AF(['1','2','3'],
+               ['a','b'],
+               {'1':{'b':'2','&':'3'},
+                '2':{'a':'1','b':'2'},
+                '3':{'a':'2,3','b':'3'}},
+               '1',
+               ['2']),                     # Estados Finais
+                "AFND")  # Nome do Arquivo
 
     Salva_Json(AF(['q0', 'q1', 'q2', 'q3'],
               ['a', 'b'],
@@ -109,9 +109,9 @@ def Cria_GLC():
 
     Salva_Json(GLC(['S','A','B','C','D'],
                     ['a','b','c','d','e'],
-                    {'S': ["AD","BC"],
+                    {'S': ["dD","BC"],
                     'A':["aC",'cC'],
-                    'B':["aB", "cD"],
+                    'B':["cB", "cD"],
                     'C':['dC', 'dA'],
                     'D':['eD', 'AB']},
                     'S'),
