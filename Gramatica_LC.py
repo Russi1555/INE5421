@@ -1,3 +1,4 @@
+import copy
 class GLC():
     def __init__(self, N, T, P, S):
         self.nao_terminais = N
@@ -210,12 +211,18 @@ class GLC():
         print(f'nao determinismo detectado no estado: {estado}, producoes nao deterministicas: {estado} -> {prods}\n')
 
     def factorization(self):
-        novoGLC = GLC(self.nao_terminais.copy(), self.terminais.copy(), self.regras.copy(), self.inicial)
-        regras = self.regras
+        backupGLC = {
+        'nao_terminais': copy.deepcopy(self.nao_terminais),
+        'terminais': copy.deepcopy(self.terminais),
+        'regras': copy.deepcopy(self.regras),
+        'inicial': copy.deepcopy(self.inicial)
+        }
+        # novoGLC = GLC(backupGLC.get('nao_terminais'), backupGLC.get('terminais'), backupGLC.get('regras'), backupGLC.get('inicial'))
+        regras = backupGLC.get('regras')
         for estado in list(regras):
             first_prods = {}
             for prod in regras.get(estado):
-                if prod[0] in self.terminais:
+                if prod[0] in backupGLC.get('terminais'):
                     if prod[0] not in first_prods :
                         first_prods.update({prod[0]: [prod]})
                     else:
@@ -225,7 +232,7 @@ class GLC():
                 if len(first_prods.get(nt)) > 1:
                     new_state = f'{estado}`'
                     self.non_determinism_alert(estado, first_prods.get(nt))
-                    if f'{estado}`' not in self.regras:
+                    if f'{estado}`' not in backupGLC.get('regras'):
                         new_prods = nt + new_state
                         additional_states += 1
                     else:
@@ -242,8 +249,9 @@ class GLC():
                     for prod in first_prods.get(nt):
                         regras.get(new_state).append(prod)
                     regras.get(estado).append(new_prods)
-        self.regras.update(regras)
+        backupGLC.get('regras').update(regras)
 
+        novoGLC = GLC(backupGLC.get('nao_terminais'), backupGLC.get('terminais'), backupGLC.get('regras'),backupGLC.get('inicial'))
         return novoGLC # Retorna o GLC antes da fatoração
 
     def remove_indirect(self):
